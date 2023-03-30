@@ -6,7 +6,7 @@
         <title>プロトタイプオブジェクト · JavaScript Primer #jsprimer</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="JavaScriptにはプロトタイプオブジェクトという特殊なオブジェクトがあります。プロトタイプオブジェクトによってメソッドなどの特性をあるオブジェクトから別のオブジェクトへと継承しています。このプロトタイプオブジェクトによる継承の動きを紹介します。">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 4.0.4">
         
         
         
@@ -24,7 +24,7 @@
                 
             
                 
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -69,6 +69,15 @@
 
     <link rel="canonical" href="https://jsprimer.net/basic/prototype-object/">
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DWY0DLHWB6"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DWY0DLHWB6');
+</script>
 <meta name="google-site-verification" content="bMotEbgYwkzA3k4PkuyK_NUdz0bKh-Phz0oUwNmRSVo" />
 <style>
     /*
@@ -109,12 +118,14 @@
         line-height: inherit;
         margin-bottom: 0px !important;
     }
+
     /* Markdown */
-    .markdown-section sup, .markdown-section sub {
+    .markdown-section sup,
+    .markdown-section sub {
         font-size: 75%;
     }
 
-    .book_footer{
+    .book_footer {
         text-align: center;
         color: #000000;
         background: #ddd;
@@ -149,6 +160,18 @@
     .navigation {
         min-width: 50px;
     }
+
+    @media (min-width: 1240px) {
+        .honkit-plugin-sandpack {
+            width: calc(100% + 180px);
+            margin: 0 0 1em -90px;
+        }
+    }
+
+    .honkit-plugin-sandpack, .honkit-plugin-sandpack--buttonContainer {
+        margin-bottom: 1em;
+    }
+
 </style>
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="../../manifest.json">
@@ -557,7 +580,7 @@
                 <a href="../async/">
             
                     
-                    非同期処理:コールバック/Promise/Async Function
+                    非同期処理:Promise/Async Function
             
                 </a>
             
@@ -1407,7 +1430,7 @@
         this.parentNode.querySelector("input").focus();
     });
 </script>
-<script>
+<script defer>
     var search = docsearch({
         apiKey: "fd28ebaba94be0c39fb9fa1b2fed4f23", // use a SEARCH-ONLY api key here
         indexName: "asciidwango",
@@ -1440,7 +1463,7 @@
                             
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="prototype-object"><a name="prototype-object" class="plugin-anchor" href="#prototype-object"><i class="fa fa-link" aria-hidden="true"></i></a>プロトタイプオブジェクト </h1>
+                                <html><head></head><body><h1 id="prototype-object"><a name="prototype-object" class="plugin-anchor" href="#prototype-object"><i class="fa fa-link" aria-hidden="true"></i></a>プロトタイプオブジェクト </h1>
 <p>「<a href="../object/">オブジェクト</a>」の章では、オブジェクトの処理方法について見てきました。
 その中で、空のオブジェクトであっても<code>toString</code>メソッドなどを呼び出せていました。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
@@ -1468,14 +1491,11 @@
 <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">Object</span>.prototype.toString); <span class="hljs-comment">// =&gt; &quot;function&quot;</span>
 </code></pre>
 <p>このような<code>prototype</code>オブジェクトに組み込まれているメソッドは<strong>プロトタイプメソッド</strong>と呼ばれます。
-この書籍では<code>Object.prototype.toString</code>のようなプロトタイプメソッドを<code>Object#toString</code>と短縮して表記します。</p>
-<blockquote>
-<p><code>Object.prototype.toString</code> = <code>Object#toString</code></p>
-</blockquote>
+この書籍では<code>Object.prototype.toString</code>のようなプロトタイプメソッドを「Objectの<code>toString</code>メソッド」と短縮して呼ぶことがあります。</p>
 <p><code>Object</code>のインスタンスは、この<code>Object.prototype</code>オブジェクトに定義されたメソッドやプロパティを継承します。
 つまり、オブジェクトリテラルや<code>new Object</code>でインスタンス化したオブジェクトは、<code>Object.prototype</code>に定義されたものが利用できるということです。</p>
-<p>次のコードでは、オブジェクトリテラルで作成（インスタンス化）したオブジェクトから、<code>Object#toString</code>メソッドを参照しています。
-このときに、インスタンスの<code>toString</code>メソッドと<code>Object#toString</code>は同じものとなることがわかります。</p>
+<p>次のコードでは、オブジェクトリテラルで作成（インスタンス化）したオブジェクトから、<code>Object.prototype.toString</code>メソッドを参照しています。
+このときに、インスタンスの<code>toString</code>メソッドと<code>Object.prototype.toString</code>は同じものとなることがわかります。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-keyword">const</span> obj = {
     <span class="hljs-string">&quot;key&quot;</span>: <span class="hljs-string">&quot;value&quot;</span>
@@ -1487,9 +1507,18 @@
 <span class="hljs-built_in">console</span>.log(obj.toString()); <span class="hljs-comment">// =&gt; &quot;[object Object]&quot;</span>
 </code></pre>
 <p>このように<code>Object.prototype</code>に定義されている<code>toString</code>メソッドなどは、インスタンス作成時に自動的に継承されるため、<code>Object</code>のインスタンスから呼び出せます。
-これによりオブジェクトリテラルで作成した空のオブジェクトでも、<code>Object#toString</code>メソッドなどを呼び出せるようになっています。</p>
+これによりオブジェクトリテラルで作成した空のオブジェクトでも、<code>Object.prototype.toString</code>メソッドなどを呼び出せるようになっています。</p>
 <p>このインスタンスから<code>prototype</code>オブジェクト上に定義されたメソッドを参照できる仕組みを<strong>プロトタイプチェーン</strong>と呼びます。
 プロトタイプチェーンの仕組みについては「<a href="../class/">クラス</a>」の章で扱うため、ここではインスタンスからプロトタイプメソッドを呼び出せるということがわかっていれば問題ありません。</p>
+<!-- textlint-disable no-use-prototype-hash,ja-technical-writing/sentence-length -->
+<h3 id="prototype-shorthand-syntax"><a name="prototype-shorthand-syntax" class="plugin-anchor" href="#prototype-shorthand-syntax"><i class="fa fa-link" aria-hidden="true"></i></a>[コラム] <code>Object#toString</code>という短縮した表記について </h3>
+<p>この書籍では、<code>Object.prototype.toString</code>のように<code>prototype</code>を含めて毎回書くと冗長なため、「Objectの<code>toString</code>メソッド」と短縮して書く場合があります。
+この書籍以外の文章では、<code>Object.prototype.toString</code>を<code>Object#toString</code>のように<code>prototype</code>の代わりに<code>#</code>を利用して表しているケースがあります。</p>
+<p><code>#</code>が<code>prototype</code>の短縮表現として使われていたのは、<code>#</code>がJavaScriptの構文として使われていない記号でもあったためです。
+詳細は「<a href="../class/">クラス</a>」の章で解説しますが、ES2022では<code>#</code>がJavaScriptの構文として追加され、<code>#</code>という記号が意味をもつようになりました。
+ES2022以降では、説明のために<code>#</code>を<code>prototype</code>の短縮表現に使うと、人によっては異なる意味に見えてしまう可能性があります。</p>
+<p>そのため、この書籍は<code>Object.prototype.toString</code>を<code>Object#toString</code>のように<code>#</code>を使って表す短縮表記は利用していません。</p>
+<!-- textlint-enable no-use-prototype-hash,ja-technical-writing/sentence-length -->
 <h3 id="same-method-name-order"><a name="same-method-name-order" class="plugin-anchor" href="#same-method-name-order"><i class="fa fa-link" aria-hidden="true"></i></a>プロトタイプメソッドとインスタンスメソッドの優先順位 </h3>
 <p>プロトタイプメソッドと同じ名前のメソッドがインスタンスオブジェクトに定義されている場合もあります。
 その場合には、インスタンスに定義したメソッドが優先して呼び出されます。</p>
@@ -1505,23 +1534,25 @@
 <span class="hljs-built_in">console</span>.log(customObject.toString()); <span class="hljs-comment">// =&gt; &quot;custom value&quot;</span>
 </code></pre>
 <p>このように、インスタンスとプロトタイプオブジェクトで同じ名前のメソッドがある場合には、インスタンスのメソッドが優先されます。</p>
-<h3 id="diff-in-operator-and-hasOwnProperty"><a name="diff-in-operator-and-hasOwnProperty" class="plugin-anchor" href="#diff-in-operator-and-hasOwnProperty"><i class="fa fa-link" aria-hidden="true"></i></a><code>in</code>演算子と<code>Object#hasOwnProperty</code>メソッドの違い </h3>
-<p>「<a href="../object/">オブジェクト</a>」の章で学んだ<code>Object#hasOwnProperty</code>メソッドと<code>in</code>演算子の挙動の違いについて見ていきます。
+<h3 id="diff-in-operator-and-object-hasown"><a name="diff-in-operator-and-object-hasown" class="plugin-anchor" href="#diff-in-operator-and-object-hasown"><i class="fa fa-link" aria-hidden="true"></i></a><code>Object.hasOwn</code>静的メソッドと<code>in</code>演算子との違い </h3>
+<p>「<a href="../object/">オブジェクト</a>」の章で学んだ<code>Object.hasOwn</code>静的メソッドと<code>in</code>演算子の挙動の違いについて見ていきます。
 2つの挙動の違いはこの章で紹介したプロトタイプオブジェクトに関係しています。</p>
-<p><code>hasOwnProperty</code>メソッドは、そのオブジェクト自身が指定したプロパティを持っているかを判定します。
+<p><code>Object.hasOwn</code>静的メソッドは、指定したオブジェクト自体が指定したプロパティを持っているかを判定します。
 一方、<code>in</code>演算子はオブジェクト自身が持っていなければ、そのオブジェクトの継承元である<code>prototype</code>オブジェクトまで探索して持っているかを判定します。
 つまり、<code>in</code>演算子はインスタンスに実装されたメソッドなのか、プロトタイプオブジェクトに実装されたメソッドなのかを区別しません。</p>
-<p>次のコードでは、空のオブジェクトが<code>toString</code>メソッドを持っているかを<code>Object#hasOwnProperty</code>メソッドと<code>in</code>演算子でそれぞれ判定しています。
-<code>hasOwnProperty</code>メソッドは<code>false</code>を返し、<code>in</code>演算子は<code>toString</code>メソッドがプロトタイプオブジェクトに存在するため<code>true</code>を返します。</p>
-<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<p>次のコードでは、空のオブジェクトが<code>toString</code>メソッドを持っているかを<code>Object.hasOwn</code>静的メソッドと<code>in</code>演算子でそれぞれ判定しています。
+<code>Object.hasOwn</code>静的メソッドは<code>false</code>を返し、<code>in</code>演算子は<code>toString</code>メソッドがプロトタイプオブジェクトに存在するため<code>true</code>を返します。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a>
+<!-- doctest:meta:{ "ECMAScript": "2022" } --></p>
 <pre><code class="lang-js"><span class="hljs-keyword">const</span> obj = {};
 <span class="hljs-comment">// `obj`というオブジェクト自体に`toString`メソッドが定義されているわけではない</span>
-<span class="hljs-built_in">console</span>.log(obj.hasOwnProperty(<span class="hljs-string">&quot;toString&quot;</span>)); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.hasOwn(obj, <span class="hljs-string">&quot;toString&quot;</span>)); <span class="hljs-comment">// =&gt; false</span>
 <span class="hljs-comment">// `in`演算子は指定されたプロパティ名が見つかるまで親をたどるため、`Object.prototype`まで見にいく</span>
 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;toString&quot;</span> <span class="hljs-keyword">in</span> obj); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
-<p>次のように、インスタンスが<code>toString</code>メソッドを持っている場合は、<code>hasOwnProperty</code>メソッドも<code>true</code>を返します。</p>
-<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
+<p>次のように、インスタンスが<code>toString</code>メソッドを持っている場合は、<code>Object.hasOwn</code>静的メソッドも<code>true</code>を返します。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a>
+<!-- doctest:meta:{ "ECMAScript": "2022" } --></p>
 <pre><code class="lang-js"><span class="hljs-comment">// オブジェクトのインスタンスにtoStringメソッドを定義</span>
 <span class="hljs-keyword">const</span> obj = {
     <span class="hljs-function"><span class="hljs-title">toString</span>(<span class="hljs-params"></span>)</span> {
@@ -1529,7 +1560,7 @@
     }
 };
 <span class="hljs-comment">// オブジェクトのインスタンスが`toString`メソッドを持っている</span>
-<span class="hljs-built_in">console</span>.log(obj.hasOwnProperty(<span class="hljs-string">&quot;toString&quot;</span>)); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.hasOwn(obj, <span class="hljs-string">&quot;toString&quot;</span>)); <span class="hljs-comment">// =&gt; true</span>
 <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;toString&quot;</span> <span class="hljs-keyword">in</span> obj); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
 <h3 id="create-method"><a name="create-method" class="plugin-anchor" href="#create-method"><i class="fa fa-link" aria-hidden="true"></i></a>オブジェクトの継承元を明示する<code>Object.create</code>メソッド </h3>
@@ -1540,7 +1571,8 @@
 <pre><code class="lang-js"><span class="hljs-comment">// const obj = {} と同じ意味</span>
 <span class="hljs-keyword">const</span> obj = <span class="hljs-built_in">Object</span>.create(<span class="hljs-built_in">Object</span>.prototype);
 <span class="hljs-comment">// `obj`は`Object.prototype`を継承している</span>
-<span class="hljs-built_in">console</span>.log(obj.hasOwnProperty === <span class="hljs-built_in">Object</span>.prototype.hasOwnProperty); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-comment">// そのため、`obj.toString`と`Object.prototype.toString`は同じとなる</span>
+<span class="hljs-built_in">console</span>.log(obj.toString === <span class="hljs-built_in">Object</span>.prototype.toString); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
 <h3 id="inherit-object"><a name="inherit-object" class="plugin-anchor" href="#inherit-object"><i class="fa fa-link" aria-hidden="true"></i></a>ArrayもObjectを継承している </h3>
 <p><code>Object</code>と<code>Object.prototype</code>の関係と同じように、ビルトインオブジェクト<code>Array</code>も<code>Array.prototype</code>を持っています。
@@ -1563,7 +1595,7 @@
 </code></pre>
 <p>このように、<code>Array</code>のインスタンスも<code>Object.prototype</code>を継承しているため、
 <code>Object.prototype</code>に定義されているメソッドを利用できます。</p>
-<p>次のコードでは、<code>Array</code>のインスタンスから<code>Object#hasOwnProperty</code>メソッドが参照できていることがわかります。</p>
+<p>次のコードでは、<code>Array</code>のインスタンスから<code>Object.prototype.hasOwnProperty</code>メソッドが参照できていることがわかります。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-keyword">const</span> array = [];
 <span class="hljs-comment">// `Array`のインスタンス -&gt; `Array.prototype` -&gt; `Object.prototype`</span>
@@ -1573,14 +1605,14 @@
 <p>ここでは、<code>Object.prototype</code>はすべてのオブジェクトの親となるオブジェクトであることを覚えておくだけで問題ありません。
 これにより、<code>Array</code>や<code>String</code>などのインスタンスも<code>Object.prototype</code>が持つメソッドを利用できる点を覚えておきましょう。</p>
 <p>また、<code>Array.prototype</code>などもそれぞれ独自のメソッドを定義しています。
-たとえば、<code>Array#toString</code>メソッドもそのひとつです。
-そのため、配列のインスタンスで<code>toString</code>メソッドを呼び出すと<code>Array#toString</code>が優先して呼び出されます。</p>
+たとえば、<code>Array.prototype.toString</code>メソッドもそのひとつです。
+そのため、Arrayのインスタンスで<code>toString</code>メソッドを呼び出すと<code>Array.prototype.toString</code>が優先して呼び出されます。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-keyword">const</span> numbers = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
-<span class="hljs-comment">// `Array#toString`が定義されているため、`Object#toString`とは異なる形式となる</span>
+<span class="hljs-comment">// `Array.prototype.toString`が定義されているため、`Object.prototype.toString`とは異なる出力形式となる</span>
 <span class="hljs-built_in">console</span>.log(numbers.toString()); <span class="hljs-comment">// =&gt; &quot;1,2,3&quot;</span>
 </code></pre>
-<h2 id="not-inherit-object"><a name="not-inherit-object" class="plugin-anchor" href="#not-inherit-object"><i class="fa fa-link" aria-hidden="true"></i></a>[コラム] <code>Object.prototype</code>を継承しないオブジェクト </h2>
+<h2 id="not-inherit-object"><a name="not-inherit-object" class="plugin-anchor" href="#not-inherit-object"><i class="fa fa-link" aria-hidden="true"></i></a><code>Object.prototype</code>を継承しないオブジェクト </h2>
 <p><code>Object</code>はすべてのオブジェクトの親になるオブジェクトであると言いましたが、例外もあります。</p>
 <p>イディオム（慣習的な書き方）ですが、<code>Object.create(null)</code>とすることで<code>Object.prototype</code>を継承しないオブジェクトを作成できます。
 これにより、プロパティやメソッドをまったく持たない本当に<strong>空のオブジェクト</strong>を作れます。</p>
@@ -1594,7 +1626,8 @@
 <code>Object.create</code>メソッドは<code>Object.create(null)</code>というイディオムで、一部ライブラリなどで<code>Map</code>オブジェクトの代わりとして利用されていました。
 Mapとはキーと値の組み合わせを保持するためのオブジェクトです。</p>
 <p>ただのオブジェクトもMapとよく似た性質を持っていますが、最初からいくつかのプロパティが存在しアクセスできてしまいます。
-なぜなら、<code>Object</code>のインスタンスはデフォルトで<code>Object.prototype</code>を継承するため、<code>toString</code>などのプロパティ名がオブジェクトを作成した時点で存在するためです。そのため、<code>Object.create(null)</code>で<code>Object.prototype</code>を継承しないオブジェクトを作成し、そのオブジェクトが<code>Map</code>の代わりとして使われていました。</p>
+なぜなら、<code>Object</code>のインスタンスはデフォルトで<code>Object.prototype</code>を継承するので、<code>toString</code>などのプロパティ名がオブジェクトを作成した時点で存在するためです。
+そのため、<code>Object.create(null)</code>で<code>Object.prototype</code>を継承しないオブジェクトを作成し、そのオブジェクトが<code>Map</code>の代わりとして使われていました。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// 空オブジェクトを作成</span>
 <span class="hljs-keyword">const</span> obj = {};
@@ -1605,13 +1638,26 @@ Mapとはキーと値の組み合わせを保持するためのオブジェク�
 <span class="hljs-comment">// toStringキーは存在しない</span>
 <span class="hljs-built_in">console</span>.log(mapLike[<span class="hljs-string">&quot;toString&quot;</span>]); <span class="hljs-comment">// =&gt; undefined</span>
 </code></pre>
-<p>しかし、ES2015からは、本物の<code>Map</code>が利用できるため、<code>Object.create(null)</code>を<code>Map</code>の代わりに利用する必要はありません。
+<p>しかし、ES2015からは本物の<code>Map</code>が利用できるため、<code>Object.create(null)</code>を<code>Map</code>の代わりに利用する必要はありません。
 <code>Map</code>については「<a href="../map-and-set/">Map/Set</a>」の章で詳しく紹介します。</p>
+<p>また<code>Object.create(null)</code>によって作成される空のオブジェクトは、<code>Object.hasOwn</code>静的メソッドがES2022で導入された理由でもあります。</p>
+<p>次のように、<code>Object.prototype</code>を継承しないオブジェクトは、<code>Object.prototype.hasOwnProperty</code>メソッドを呼び出せません。
+そのため、オブジェクトがプロパティを持っているかということを確認する際に、単純には<code>hasOwnProperty</code>メソッドが使えないという状況が出てきました。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> map = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>();
-<span class="hljs-comment">// toStringキーは存在しない</span>
-<span class="hljs-built_in">console</span>.log(map.has(<span class="hljs-string">&quot;toString&quot;</span>)); <span class="hljs-comment">// =&gt; false</span>
+<pre><code class="lang-js"><span class="hljs-comment">// Mapのような空オブジェクト</span>
+<span class="hljs-keyword">const</span> mapLike = <span class="hljs-built_in">Object</span>.create(<span class="hljs-literal">null</span>);
+<span class="hljs-comment">// `Object.prototype`を継承していないため呼び出すと例外が発生する</span>
+<span class="hljs-built_in">console</span>.log(mapLike.hasOwnProperty(<span class="hljs-string">&quot;key&quot;</span>)); <span class="hljs-comment">// =&gt; Error: hasOwnPropertyメソッドは呼び出せない</span>
 </code></pre>
+<p>ES2022から導入された<code>Object.hasOwn</code>静的メソッドは、対象のオブジェクトが<code>Object.prototype</code>を継承していないかは関係なく利用できます。</p>
+<p><a class="gitbook-plugin-js-console" aria-hidden="true"></a>
+<!-- doctest:meta:{ "ECMAScript": "2022" } --></p>
+<pre><code class="lang-js"><span class="hljs-comment">// Mapのような空オブジェクト</span>
+<span class="hljs-keyword">const</span> mapLike = <span class="hljs-built_in">Object</span>.create(<span class="hljs-literal">null</span>);
+<span class="hljs-comment">// keyは存在しない</span>
+<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.hasOwn(mapLike, <span class="hljs-string">&quot;key&quot;</span>)); <span class="hljs-comment">// =&gt; false</span>
+</code></pre>
+<p>このように、対象となるオブジェクトに依存しない<code>Object.hasOwn</code>静的メソッドは、<code>hasOwnProperty</code>メソッドの欠点を修正しています。</p>
 <h2 id="conclusion"><a name="conclusion" class="plugin-anchor" href="#conclusion"><i class="fa fa-link" aria-hidden="true"></i></a>まとめ </h2>
 <p>この章では、プロトタイプオブジェクトについて学びました。</p>
 <ul>
@@ -1623,7 +1669,7 @@ Mapとはキーと値の組み合わせを保持するためのオブジェク�
 </ul>
 <p>プロトタイプオブジェクトに定義されているメソッドがどのように参照されているかを確認しました。
 このプロトタイプの詳しい仕組みについては「<a href="../class/">クラス</a>」の章で改めて解説します。</p>
-
+</body></html>
                                 
                                 </section>
                             
@@ -1654,7 +1700,7 @@ Mapとはキーと値の組み合わせを保持するためのオブジェク�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"author":"azu","description":"JavaScriptにはプロトタイプオブジェクトという特殊なオブジェクトがあります。プロトタイプオブジェクトによってメソッドなどの特性をあるオブジェクトから別のオブジェクトへと継承しています。このプロトタイプオブジェクトによる継承の動きを紹介します。","title":"プロトタイプオブジェクト","level":"1.3.13","depth":2,"next":{"title":"配列","level":"1.3.14","depth":2,"path":"basic/array/README.md","ref":"./basic/array/README.md","articles":[]},"previous":{"title":"オブジェクト","level":"1.3.12","depth":2,"path":"basic/object/README.md","ref":"./basic/object/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","ga","js-console","github-issue-feedback"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"apiKey":"fd28ebaba94be0c39fb9fa1b2fed4f23","index":"asciidwango"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"ga":{"configuration":"auto","token":"UA-2184335-18"},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2021","nodeversion":"14.15.0","npmversion":"6.14.8","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"basic/prototype-object/README.md","mtime":"2021-06-27T14:31:53.046Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-06-27T14:32:41.926Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"author":"azu","description":"JavaScriptにはプロトタイプオブジェクトという特殊なオブジェクトがあります。プロトタイプオブジェクトによってメソッドなどの特性をあるオブジェクトから別のオブジェクトへと継承しています。このプロトタイプオブジェクトによる継承の動きを紹介します。","title":"プロトタイプオブジェクト","level":"1.3.13","depth":2,"next":{"title":"配列","level":"1.3.14","depth":2,"path":"basic/array/README.md","ref":"./basic/array/README.md","articles":[]},"previous":{"title":"オブジェクト","level":"1.3.12","depth":2,"path":"basic/object/README.md","ref":"./basic/object/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","js-console","github-issue-feedback","sandpack"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"index":"83I8JIFICQ","apiKey":"9169ce4cd84fcf2376f29d9585c89254"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"sandpack":{},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2022","nodeversion":"18.14.0","npmversion":"9.3.1","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"basic/prototype-object/README.md","mtime":"2023-03-30T00:08:40.715Z","type":"markdown"},"gitbook":{"version":"4.0.4","time":"2023-03-30T00:09:07.116Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
@@ -1712,15 +1758,15 @@ Mapとはキーと値の組み合わせを保持するためのオブジェク�
         
     
         
-        <script src="../../gitbook/gitbook-plugin-ga/plugin.js"></script>
-        
-    
-        
         <script src="../../gitbook/gitbook-plugin-js-console/console-ui.js"></script>
         
     
         
         <script src="../../gitbook/gitbook-plugin-github-issue-feedback/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/honkit-plugin-sandpack/honkit-plugin-sandpack.js"></script>
         
     
         
