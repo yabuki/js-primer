@@ -6,7 +6,7 @@
         <title>暗黙的な型変換 · JavaScript Primer #jsprimer</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="JavaScriptの暗黙的な型変換は意図しない挙動を発生する原因の1つです。暗黙的な型変換が発生する具体的なコード例や予測が難しいことについてを紹介します。逆に明示的に変換する方法についても紹介します。">
-        <meta name="generator" content="HonKit 4.0.4">
+        <meta name="generator" content="HonKit 6.0.2">
         
         
         
@@ -28,7 +28,7 @@
                 
             
                 
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
                 
             
         
@@ -84,12 +84,11 @@
 </script>
 <script type="module">
     // コンソールUIでコード実行したらイベントとして送信する
-    const config = { childList: true };
     const onExecuteCode = (scriptType) => {
-        gtag('event','execute_code', {
-            'event_category': 'console',
-            'event_label': 'execute_code',
-            'script_type': scriptType || 'unknown'
+        gtag("event", "execute_code", {
+            "event_category": "console",
+            "event_label": "execute_code",
+            "script_type": scriptType || "unknown"
         });
     };
     let observer;
@@ -98,7 +97,6 @@
             observer.disconnect();
         }
         const callback = function(mutationsList) {
-            // Use traditional 'for loops' for IE 11
             for (const mutation of mutationsList) {
                 const mirrorConsole = Array.from(mutation.addedNodes).find(node => Boolean(node.dataset.mirrorConsole));
                 if (mirrorConsole) {
@@ -107,14 +105,35 @@
             }
         };
         observer = new MutationObserver(callback);
-        const targetNode = document.body;
-        observer.observe(targetNode, config);
+        observer.observe(document.body, { childList: true });
+    };
+    const eventMap = new WeakMap();
+    // 問題を報告ボタンを押したらイベントとして送信する
+    const onClickIssueReport = () => {
+        console.log("click_issue_report");
+        gtag("event", "click_issue_report", {
+            "event_category": "contribution",
+            "event_label": "click_issue_report"
+        });
+    };
+    const observeIssueReport = () => {
+        const targetButton = document.querySelector(".gitbook-plugin-github-issue-feedback");
+        // すでにイベントが登録されていたら何もしない
+        if (eventMap.has(targetButton)) {
+            return;
+        }
+        if (targetButton) {
+            targetButton.addEventListener("click", onClickIssueReport);
+            eventMap.set(targetButton, onClickIssueReport);
+        }
     };
     window.addEventListener("DOMContentLoaded", function() {
         gitbook.events.on("page.change", function() {
             observeEvalEvent();
+            observeIssueReport();
         });
     });
+
 </script>
 <meta name="google-site-verification" content="bMotEbgYwkzA3k4PkuyK_NUdz0bKh-Phz0oUwNmRSVo"/>
 <style>
@@ -158,6 +177,13 @@
     }
 
     /* Markdown */
+    /* Support horizon scroll */
+    /* https://stackoverflow.com/questions/17770257/scrolling-tables-horizontally-without-wrapping-them-in-div */
+    .markdown-section table {
+        max-width: 100%;
+        overflow-x: auto;
+        display: block;
+    }
     .markdown-section sup,
     .markdown-section sub {
         font-size: 75%;
@@ -213,24 +239,18 @@
 </style>
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="../../manifest.json">
-<script>
-    if ("serviceWorker" in navigator) {
-        const isLocalhost = Boolean(
-            // preview
-            /netlify.com/.test(window.location.hostname) ||
-            // local
-            window.location.hostname === "localhost" ||
-            // [::1] is the IPv6 localhost address.
-            window.location.hostname === "[::1]" ||
-            // 127.0.0.1/8 is considered localhost for IPv4.
-            window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
-        );
-        if (!isLocalhost) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("../../sw.js");
-            });
+<script defer async>
+    // unregister old service worker(remove workbox)
+    // https://github.com/asciidwango/js-primer/pull/1701
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (const registration of registrations) {
+            registration.unregister();
         }
-    }
+    }).catch(function(err) {
+        console.error(new Error("Can not getRegistrations", {
+            cause: err
+        }));
+    });
 </script>
 
     </head>
@@ -295,7 +315,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="../../intro/preparation/">
+        <li class="chapter " data-level="1.2.2" data-path="../../intro/sponsors/">
+            
+                <a href="../../intro/sponsors/">
+            
+                    
+                    JavaScript Primerスポンサー
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../../intro/preparation/">
             
                 <a href="../../intro/preparation/">
             
@@ -308,7 +341,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.3" data-path="../../intro/feedback/">
+        <li class="chapter " data-level="1.2.4" data-path="../../intro/feedback/">
             
                 <a href="../../intro/feedback/">
             
@@ -1066,14 +1099,21 @@
     <div class="book-body">
         
             <div class="body-inner">
-                 
+                
                     
 
 <!-- Header -->
-<meta name="keywords" content="JavaScript,入門,入門書,チュートリアル,書籍,本,無料,Node.js,ブラウザ"/>
+<meta name="keywords" content="JavaScript,ECMAScript,JS,入門,チュートリアル,書籍,本,無料,Node.js,ブラウザ"/>
 <link rel="author" href="https://www.hatena.ne.jp/efcl/"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- OGP -->
+<meta property="og:title" content="JavaScript Primer - 迷わないための入門書"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://jsprimer.net/"/>
+<meta property="og:image" content="https://jsprimer.net/landing/img/cover-optimized.jpg"/>
+<meta property="og:site_name" content="JavaScript Primer"/>
+<meta property="og:description" content="JavaScript Primerは、JavaScriptの基礎から応用までを一貫して学べる入門書です。"/>
 <style>
     .book-header {
         display: flex;
@@ -1463,12 +1503,12 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script defer>
+    // focus on search box
     document.querySelector(".searchbox [type=\"reset\"]").addEventListener("click", function() {
         this.parentNode.querySelector("input").focus();
     });
-</script>
-<script defer>
+    // init DocSearch
     var search = docsearch({
         apiKey: "fd28ebaba94be0c39fb9fa1b2fed4f23", // use a SEARCH-ONLY api key here
         indexName: "asciidwango",
@@ -1477,17 +1517,9 @@
     });
 </script>
 <script>
-    window.addEventListener("DOMContentLoaded", function () {
-        gitbook.events.on("page.change", function () {
-            setTimeout(() => console.clear(), 1000);
-        });
-    });
-</script>
-<script type="text/javascript">
-    (function(){var t,e,n,r,a;for(t=function(){var t;return t=[],function(){var e,n,r,a;for(n=["init","start","stop","user","track","action","event","goal","chat","buy","page","view","admin","group","alias","ready","link","form","click","submit","cmd","emit","on","send","css","js","style","option","get","set","collection"],e=function(e){return function(){return t.push([e].concat(Array.prototype.slice.call(arguments,0)))}},r=0,a=[];r<n.length;)t[n[r]]=e(n[r]),a.push(r++);return a}(),t.init=function(e,n){var r,a;return t.api_key=e,t.options=n||{},a=document.createElement("script"),a.type="text/javascript",a.async=!0,a.charset="utf-8",a.src=t.options.tracker_url||"https://static.karte.io/libs/tracker.js",r=document.getElementsByTagName("script")[0],r.parentNode.insertBefore(a,r)},t},r=window.karte_tracker_names||["tracker"],e=0,n=r.length;n>e;e++)a=r[e],window[a]||(window[a]=t());tracker.init("a2d22604ec1d1c6d9d53d9d3eb87961d", { spa_mode: { reset_past_actions: true, close_actions: true }})}).call(this);
-    window.addEventListener("DOMContentLoaded", function(){
+    window.addEventListener("DOMContentLoaded", function() {
         gitbook.events.on("page.change", function() {
-            tracker.view();
+            setTimeout(() => console.clear(), 1000);
         });
     });
 </script>
@@ -1501,19 +1533,46 @@
                             
                                 <section class="normal markdown-section">
                                 
+<style>
+    .page-sponsors {
+        background: #fafafa;
+    }
+    .page-sponsors .page-sponsors-list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 1em 0;
+        list-style: none;
+        gap: 8px;
+    }
+    .page-sponsors-footer {
+        text-align: center;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+<div class="page-sponsors">
+
+    <div class="page-sponsors-footer">
+        JavaScript Primerの<a href="https://jsprimer.net/intro/sponsors/">スポンサーを募集中</a>
+    </div>
+
+</div>
+
                                 <html><head></head><body><h1 id="implicit-coercion"><a name="implicit-coercion" class="plugin-anchor" href="#implicit-coercion"><i class="fa fa-link" aria-hidden="true"></i></a>暗黙的な型変換 </h1>
 <p>この章では、明示的な型変換と暗黙的な型変換について学んでいきます。</p>
 <p>「<a href="../operator/" title="演算子について解説した章">演算子</a>」の章にて、 等価演算子（<code>==</code>）ではなく厳密等価演算子（<code>===</code>）の利用を推奨していました。
 これは厳密等価演算子（<code>===</code>）が<strong>暗黙的な型変換</strong>をせずに、値同士を比較できるためです。</p>
 <p>厳密等価演算子（<code>===</code>）では異なるデータ型を比較した場合に、その比較結果は必ず<code>false</code>となります。
-次のコードは、数値の<code>1</code>と文字列の<code>&quot;1&quot;</code>という異なるデータ型を比較しているので、結果は<code>false</code>となります。</p>
+次のコードは、数値の<code>1</code>と文字列の<code>"1"</code>という異なるデータ型を比較しているので、結果は<code>false</code>となります。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// `===`では、異なるデータ型の比較結果はfalse</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-number">1</span> === <span class="hljs-string">&quot;1&quot;</span>); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">1</span> === <span class="hljs-string">"1"</span>); <span class="hljs-comment">// =&gt; false</span>
 </code></pre>
 <p>しかし、等価演算子（<code>==</code>）では異なるデータ型を比較した場合に、同じ型となるように<strong>暗黙的な型変換</strong>をしてから比較します。
-次のコードでは、数値の<code>1</code>と文字列の<code>&quot;1&quot;</code>の比較結果が<code>true</code>となっています。
-これは、等価演算子（<code>==</code>）は右辺の文字列<code>&quot;1&quot;</code>を数値の<code>1</code>へと暗黙的な型変換をしてから、比較するためです。</p>
+次のコードでは、数値の<code>1</code>と文字列の<code>"1"</code>の比較結果が<code>true</code>となっています。
+これは、等価演算子（<code>==</code>）は右辺の文字列<code>"1"</code>を数値の<code>1</code>へと暗黙的な型変換をしてから、比較するためです。</p>
 <!--
 
 - Number == String は Number == ToNumber(String) される
@@ -1523,7 +1582,7 @@
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// `==`では、異なるデータ型は暗黙的な型変換をしてから比較される</span>
 <span class="hljs-comment">// 暗黙的な型変換によって 1 == 1 のように変換されてから比較される</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-number">1</span> == <span class="hljs-string">&quot;1&quot;</span>); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">1</span> == <span class="hljs-string">"1"</span>); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
 <p>このように、暗黙的な型変換によって意図しない結果となるため、比較には厳密等価演算子（<code>===</code>）を使うべきです。</p>
 <p>別の暗黙的な型変換の例として、数値と真偽値の加算を見てみましょう。
@@ -1558,41 +1617,41 @@
 <p>次のように等価演算子（<code>==</code>）による比較は、驚くような結果を作り出します。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// 異なる型である場合に暗黙的な型変換が行われる</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-number">1</span> == <span class="hljs-string">&quot;1&quot;</span>); <span class="hljs-comment">// =&gt; true</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-number">0</span> == <span class="hljs-literal">false</span>); <span class="hljs-comment">// =&gt; true</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-number">10</span> == [<span class="hljs-string">&quot;10&quot;</span>]); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">1</span> == <span class="hljs-string">"1"</span>); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">0</span> == <span class="hljs-literal">false</span>); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">10</span> == [<span class="hljs-string">"10"</span>]); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
 <p>このほかにも等価演算子による予想できない結果は、比較する値と型の組み合わせの数だけあります。
 そのため、等価演算子の比較結果がどうなるかを覚えるのは現実的でありません。</p>
-<p><a href="https://dorey.github.io/JavaScript-Equality-Table/" target="_blank"><img src="img/JavaScript-Equality-Table.png" alt="等価演算子による比較結果をまとめた表。緑はtrueとなる組み合わせ"></a></p>
+<p><a href="https://dorey.github.io/JavaScript-Equality-Table/" target="_blank"><img src="img/JavaScript-Equality-Table.png" alt="等価演算子による比較結果をまとめた表。緑はtrueとなる組み合わせ"></img></a></p>
 <p>しかし、等価演算子の暗黙的な型変換を避ける簡単な方法があります。</p>
 <p>それは、常に厳密等価演算子（<code>===</code>）を使うことです。
 値を比較する際は、常に厳密等価演算子を使うことで、暗黙的な型変換をせずに値を比較できます。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-built_in">console</span>.log(<span class="hljs-number">1</span> === <span class="hljs-string">&quot;1&quot;</span>); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-number">0</span> === <span class="hljs-literal">false</span>); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-number">10</span> === [<span class="hljs-string">&quot;10&quot;</span>]); <span class="hljs-comment">// =&gt; false</span>
+<pre><code class="lang-js"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">1</span> === <span class="hljs-string">"1"</span>); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">0</span> === <span class="hljs-literal">false</span>); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-number">10</span> === [<span class="hljs-string">"10"</span>]); <span class="hljs-comment">// =&gt; false</span>
 </code></pre>
 <p>厳密等価演算子（<code>===</code>）を使うことで、意図しない比較結果を避けることができます。
 そのため、比較には等価演算子（<code>==</code>）ではなく厳密等価演算子（<code>===</code>）を使うことを推奨します。</p>
 <h3 id="various-implicit-coercion"><a name="various-implicit-coercion" class="plugin-anchor" href="#various-implicit-coercion"><i class="fa fa-link" aria-hidden="true"></i></a>さまざまな暗黙的な型変換 </h3>
 <p>他の演算子についても、具体的な例を見てみましょう。</p>
-<p>次のコードでは、数値の<code>1</code>と文字列の<code>&quot;2&quot;</code>をプラス演算子で処理しています。
+<p>次のコードでは、数値の<code>1</code>と文字列の<code>"2"</code>をプラス演算子で処理しています。
 プラス演算子（<code>+</code>）は、数値の加算と文字列の結合を両方実行できるように多重定義されています。
 このケースでは、JavaScriptは文字列の結合を優先する仕様となっています。
-そのため、数値の<code>1</code>を文字列の<code>&quot;1&quot;</code>へ暗黙的に変換してから、文字列結合します。</p>
+そのため、数値の<code>1</code>を文字列の<code>"1"</code>へ暗黙的に変換してから、文字列結合します。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-number">1</span> + <span class="hljs-string">&quot;2&quot;</span>; <span class="hljs-comment">// =&gt; &quot;12&quot;</span>
+<pre><code class="lang-js"><span class="hljs-number">1</span> + <span class="hljs-string">"2"</span>; <span class="hljs-comment">// =&gt; "12"</span>
 <span class="hljs-comment">// 演算過程で次のように暗黙的な型変換が行われる</span>
-<span class="hljs-string">&quot;1&quot;</span> + <span class="hljs-string">&quot;2&quot;</span>; <span class="hljs-comment">// =&gt; &quot;12&quot;</span>
+<span class="hljs-string">"1"</span> + <span class="hljs-string">"2"</span>; <span class="hljs-comment">// =&gt; "12"</span>
 </code></pre>
 <p>もうひとつ、数値と文字列での暗黙的な型変換を見てみましょう。
-次のコードでは、数値の<code>1</code>から文字列の<code>&quot;2&quot;</code>を減算しています。</p>
+次のコードでは、数値の<code>1</code>から文字列の<code>"2"</code>を減算しています。</p>
 <p>JavaScriptには、文字列に対するマイナス演算子（<code>-</code>）の定義はありません。
 そのため、マイナス演算子の対象となる数値への暗黙的な型変換が行われます。
-これにより、文字列の<code>&quot;2&quot;</code>を数値の<code>2</code>へ暗黙的に変換してから、減算します。</p>
+これにより、文字列の<code>"2"</code>を数値の<code>2</code>へ暗黙的に変換してから、減算します。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-number">1</span> - <span class="hljs-string">&quot;2&quot;</span>; <span class="hljs-comment">// =&gt; -1</span>
+<pre><code class="lang-js"><span class="hljs-number">1</span> - <span class="hljs-string">"2"</span>; <span class="hljs-comment">// =&gt; -1</span>
 <span class="hljs-comment">// 演算過程で次のように暗黙的な型変換が行われる</span>
 <span class="hljs-number">1</span> - <span class="hljs-number">2</span>; <span class="hljs-comment">// =&gt; -1</span>
 </code></pre>
@@ -1601,10 +1660,10 @@
 <p>次のように3つ以上の値を<code>+</code>演算子で演算する場合に、値の型が混ざっていると、
 演算する順番によっても結果が異なります。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> x = <span class="hljs-number">1</span>, y = <span class="hljs-string">&quot;2&quot;</span>, z = <span class="hljs-number">3</span>;
-<span class="hljs-built_in">console</span>.log(x + y + z); <span class="hljs-comment">// =&gt; &quot;123&quot;</span>
-<span class="hljs-built_in">console</span>.log(y + x + z); <span class="hljs-comment">// =&gt; &quot;213&quot;</span>
-<span class="hljs-built_in">console</span>.log(x + z + y); <span class="hljs-comment">// =&gt; &quot;42&quot;</span>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> x = <span class="hljs-number">1</span>, y = <span class="hljs-string">"2"</span>, z = <span class="hljs-number">3</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(x + y + z); <span class="hljs-comment">// =&gt; "123"</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(y + x + z); <span class="hljs-comment">// =&gt; "213"</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(x + z + y); <span class="hljs-comment">// =&gt; "42"</span>
 </code></pre>
 <p>このように、処理の過程でオペランドの型によって、
 自動的に変換されることを<strong>暗黙的な型変換</strong>と呼んでいます。</p>
@@ -1615,12 +1674,12 @@
 <h3 id="any-to-boolean"><a name="any-to-boolean" class="plugin-anchor" href="#any-to-boolean"><i class="fa fa-link" aria-hidden="true"></i></a>任意の値 → 真偽値 </h3>
 <p>JavaScriptでは<code>Boolean</code>コンストラクタ関数を使うことで、任意の値を<code>true</code>または<code>false</code>の真偽値に変換できます。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-built_in">Boolean</span>(<span class="hljs-string">&quot;string&quot;</span>); <span class="hljs-comment">// =&gt; true</span>
-<span class="hljs-built_in">Boolean</span>(<span class="hljs-number">1</span>); <span class="hljs-comment">// =&gt; true</span>
-<span class="hljs-built_in">Boolean</span>({}); <span class="hljs-comment">// =&gt; true</span>
-<span class="hljs-built_in">Boolean</span>(<span class="hljs-number">0</span>); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">Boolean</span>(<span class="hljs-string">&quot;&quot;</span>); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">Boolean</span>(<span class="hljs-literal">null</span>); <span class="hljs-comment">// =&gt; false</span>
+<pre><code class="lang-js"><span class="hljs-title class_">Boolean</span>(<span class="hljs-string">"string"</span>); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-number">1</span>); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-title class_">Boolean</span>({}); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-number">0</span>); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">""</span>); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-literal">null</span>); <span class="hljs-comment">// =&gt; false</span>
 </code></pre>
 <p>JavaScriptでは、次の値は<code>false</code>へ変換されます。</p>
 <ul>
@@ -1630,7 +1689,7 @@
 <li><code>0</code></li>
 <li><code>0n</code></li>
 <li><code>NaN</code></li>
-<li><code>&quot;&quot;</code>（空文字列）</li>
+<li><code>""</code>（空文字列）</li>
 </ul>
 <p>暗黙的な型変換によって<code>false</code>に変換されるこれらの値をまとめて<strong>falsy</strong>な値と呼びます。
 falsyではない値は、<code>true</code>へと変換されます。</p>
@@ -1640,7 +1699,7 @@ falsyではない値は、<code>true</code>へと変換されます。</p>
 <pre><code class="lang-js"><span class="hljs-comment">// x は undefined</span>
 <span class="hljs-keyword">let</span> x; 
 <span class="hljs-keyword">if</span> (!x) {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;falsyな値なら表示&quot;</span>, x);
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"falsyな値なら表示"</span>, x);
 }
 </code></pre>
 <p>真偽値については、暗黙的な型変換のルールが少ないため、明示的に変換せずに扱われることも多いです。
@@ -1648,25 +1707,25 @@ falsyではない値は、<code>true</code>へと変換されます。</p>
 <pre><code class="lang-js"><span class="hljs-comment">// x は undefined</span>
 <span class="hljs-keyword">let</span> x;
 <span class="hljs-keyword">if</span> (x === <span class="hljs-literal">undefined</span>) {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;xがundefinedなら表示&quot;</span>, x);
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"xがundefinedなら表示"</span>, x);
 }
 </code></pre>
 <h3 id="number-to-string"><a name="number-to-string" class="plugin-anchor" href="#number-to-string"><i class="fa fa-link" aria-hidden="true"></i></a>数値 → 文字列 </h3>
 <p>数値から文字列へ明示的に変換する場合は、<code>String</code>コンストラクタ関数を使います。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-built_in">String</span>(<span class="hljs-number">1</span>); <span class="hljs-comment">// =&gt; &quot;1&quot;</span>
+<pre><code class="lang-js"><span class="hljs-title class_">String</span>(<span class="hljs-number">1</span>); <span class="hljs-comment">// =&gt; "1"</span>
 </code></pre>
 <p><code>String</code>コンストラクタ関数は、数値以外にもいろいろな値を文字列へと変換できます。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-built_in">String</span>(<span class="hljs-string">&quot;str&quot;</span>); <span class="hljs-comment">// =&gt; &quot;str&quot;</span>
-<span class="hljs-built_in">String</span>(<span class="hljs-literal">true</span>); <span class="hljs-comment">// =&gt; &quot;true&quot;</span>
-<span class="hljs-built_in">String</span>(<span class="hljs-literal">null</span>); <span class="hljs-comment">// =&gt; &quot;null&quot;</span>
-<span class="hljs-built_in">String</span>(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// =&gt; &quot;undefined&quot;</span>
-<span class="hljs-built_in">String</span>(<span class="hljs-built_in">Symbol</span>(<span class="hljs-string">&quot;シンボルの説明文&quot;</span>)); <span class="hljs-comment">// =&gt; &quot;Symbol(シンボルの説明文)&quot;</span>
+<pre><code class="lang-js"><span class="hljs-title class_">String</span>(<span class="hljs-string">"str"</span>); <span class="hljs-comment">// =&gt; "str"</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-literal">true</span>); <span class="hljs-comment">// =&gt; "true"</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-literal">null</span>); <span class="hljs-comment">// =&gt; "null"</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// =&gt; "undefined"</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-title class_">Symbol</span>(<span class="hljs-string">"シンボルの説明文"</span>)); <span class="hljs-comment">// =&gt; "Symbol(シンボルの説明文)"</span>
 <span class="hljs-comment">// プリミティブ型ではない値の場合</span>
-<span class="hljs-built_in">String</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]); <span class="hljs-comment">// =&gt; &quot;1,2,3&quot;</span>
-<span class="hljs-built_in">String</span>({ <span class="hljs-attr">key</span>: <span class="hljs-string">&quot;value&quot;</span> }); <span class="hljs-comment">// =&gt; &quot;[object Object]&quot;</span>
-<span class="hljs-built_in">String</span>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{}); <span class="hljs-comment">// &quot;function() {}&quot;</span>
+<span class="hljs-title class_">String</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]); <span class="hljs-comment">// =&gt; "1,2,3"</span>
+<span class="hljs-title class_">String</span>({ <span class="hljs-attr">key</span>: <span class="hljs-string">"value"</span> }); <span class="hljs-comment">// =&gt; "[object Object]"</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {}); <span class="hljs-comment">// "function() {}"</span>
 </code></pre>
 <!-- Note: ES2018からFunction.prototype.toStringの結果は標準化された -->
 <p>上記の結果からもわかるように<code>String</code>コンストラクタ関数での明示的な変換は、万能な方法ではありません。
@@ -1679,18 +1738,18 @@ falsyではない値は、<code>true</code>へと変換されます。</p>
 <p>プラス演算子を文字列に利用した場合、文字列の結合を優先します。
 「片方が文字列なら、もう片方のオペランドとは関係なく、結果は文字列となるのでは？」と考えるかもしれません。</p>
 <!-- doctest:disable -->
-<pre><code class="lang-js"><span class="hljs-string">&quot;文字列&quot;</span> + x; <span class="hljs-comment">// 文字列となる？</span>
+<pre><code class="lang-js"><span class="hljs-string">"文字列"</span> + x; <span class="hljs-comment">// 文字列となる？</span>
 </code></pre>
 <p>しかし、ES2015で追加されたプリミティブ型であるシンボルは暗黙的に型変換できません。
 文字列結合演算子をシンボルに対して利用すると例外を投げるようになっています。
 そのため、片方が文字列であるからといってプラス演算子の結果は必ず文字列になるとは限らないことがわかります。</p>
 <p>次のコードでは、シンボルを文字列結合演算子（<code>+</code>）で文字列に変換できないという<code>TypeError</code>が発生しています。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-string">&quot;文字列と&quot;</span> + <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">&quot;シンボルの説明&quot;</span>); <span class="hljs-comment">// =&gt; TypeError: can&apos;t convert symbol to string</span>
+<pre><code class="lang-js"><span class="hljs-string">"文字列と"</span> + <span class="hljs-title class_">Symbol</span>(<span class="hljs-string">"シンボルの説明"</span>); <span class="hljs-comment">// =&gt; TypeError: can't convert symbol to string</span>
 </code></pre>
 <p>この問題も<code>String</code>コンストラクタ関数を使うことで、シンボルを明示的に文字列化することで解決できます。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-string">&quot;文字列と&quot;</span> + <span class="hljs-built_in">String</span>(<span class="hljs-built_in">Symbol</span>(<span class="hljs-string">&quot;シンボルの説明&quot;</span>)); <span class="hljs-comment">// =&gt; &quot;文字列とSymbol(シンボルの説明)&quot;</span>
+<pre><code class="lang-js"><span class="hljs-string">"文字列と"</span> + <span class="hljs-title class_">String</span>(<span class="hljs-title class_">Symbol</span>(<span class="hljs-string">"シンボルの説明"</span>)); <span class="hljs-comment">// =&gt; "文字列とSymbol(シンボルの説明)"</span>
 </code></pre>
 <h3 id="string-to-number"><a name="string-to-number" class="plugin-anchor" href="#string-to-number"><i class="fa fa-link" aria-hidden="true"></i></a>文字列 → 数値 </h3>
 <p>文字列から数値に変換する典型的なケースとしては、ユーザー入力として数字を受け取ることがあげられます。
@@ -1700,42 +1759,42 @@ falsyではない値は、<code>true</code>へと変換されます。</p>
 <!-- window.promptはないため -->
 <!-- doctest: ReferenceError --></p>
 <pre><code class="lang-js"><span class="hljs-comment">// ユーザー入力を文字列として受け取る</span>
-<span class="hljs-keyword">const</span> input = <span class="hljs-built_in">window</span>.prompt(<span class="hljs-string">&quot;数字を入力してください&quot;</span>, <span class="hljs-string">&quot;42&quot;</span>);
+<span class="hljs-keyword">const</span> input = <span class="hljs-variable language_">window</span>.<span class="hljs-title function_">prompt</span>(<span class="hljs-string">"数字を入力してください"</span>, <span class="hljs-string">"42"</span>);
 <span class="hljs-comment">// 文字列を数値に変換する</span>
-<span class="hljs-keyword">const</span> num = <span class="hljs-built_in">Number</span>(input);
-<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">typeof</span> num); <span class="hljs-comment">// =&gt; &quot;number&quot;</span>
-<span class="hljs-built_in">console</span>.log(num); <span class="hljs-comment">// 入力された文字列を数値に変換したもの</span>
+<span class="hljs-keyword">const</span> num = <span class="hljs-title class_">Number</span>(input);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-keyword">typeof</span> num); <span class="hljs-comment">// =&gt; "number"</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(num); <span class="hljs-comment">// 入力された文字列を数値に変換したもの</span>
 </code></pre>
 <p>また、文字列から数字を取り出して変換する関数として<code>Number.parseInt</code>、<code>Number.parseFloat</code>も利用できます。
 <code>Number.parseInt</code>は文字列から整数を取り出し、<code>Number.parseFloat</code>は文字列から浮動小数点数を取り出すことができます。
 <code>Number.parseInt(文字列, 基数)</code>の第二引数には基数を指定します。
 たとえば、文字列をパースして10進数として数値を取り出したい場合は、第二引数に基数として<code>10</code>を指定します。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-comment">// &quot;1&quot;をパースして10進数として取り出す</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Number</span>.parseInt(<span class="hljs-string">&quot;1&quot;</span>, <span class="hljs-number">10</span>)); <span class="hljs-comment">// =&gt; 1</span>
+<pre><code class="lang-js"><span class="hljs-comment">// "1"をパースして10進数として取り出す</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">"1"</span>, <span class="hljs-number">10</span>)); <span class="hljs-comment">// =&gt; 1</span>
 <span class="hljs-comment">// 余計な文字は無視してパースした結果を返す</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Number</span>.parseInt(<span class="hljs-string">&quot;42px&quot;</span>, <span class="hljs-number">10</span>)); <span class="hljs-comment">// =&gt; 42</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Number</span>.parseInt(<span class="hljs-string">&quot;10.5&quot;</span>, <span class="hljs-number">10</span>)); <span class="hljs-comment">// =&gt; 10</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">"42px"</span>, <span class="hljs-number">10</span>)); <span class="hljs-comment">// =&gt; 42</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">"10.5"</span>, <span class="hljs-number">10</span>)); <span class="hljs-comment">// =&gt; 10</span>
 <span class="hljs-comment">// 文字列をパースして浮動小数点数として取り出す</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Number</span>.parseFloat(<span class="hljs-string">&quot;1&quot;</span>)); <span class="hljs-comment">// =&gt; 1</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Number</span>.parseFloat(<span class="hljs-string">&quot;42.5px&quot;</span>)); <span class="hljs-comment">// =&gt; 42.5</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Number</span>.parseFloat(<span class="hljs-string">&quot;10.5&quot;</span>)); <span class="hljs-comment">// =&gt; 10.5</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseFloat</span>(<span class="hljs-string">"1"</span>)); <span class="hljs-comment">// =&gt; 1</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseFloat</span>(<span class="hljs-string">"42.5px"</span>)); <span class="hljs-comment">// =&gt; 42.5</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseFloat</span>(<span class="hljs-string">"10.5"</span>)); <span class="hljs-comment">// =&gt; 10.5</span>
 </code></pre>
 <p>しかし、ユーザーが数字を入力するとは限りません。
 <code>Number</code>コンストラクタ関数、<code>Number.parseInt</code>、<code>Number.parseFloat</code>は、
 数字以外の文字列を渡すと<code>NaN</code>（Not a Number）を返します。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// 数字ではないため、数値へは変換できない</span>
-<span class="hljs-built_in">Number</span>(<span class="hljs-string">&quot;文字列&quot;</span>); <span class="hljs-comment">// =&gt; NaN</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-string">"文字列"</span>); <span class="hljs-comment">// =&gt; NaN</span>
 <span class="hljs-comment">// 未定義の値はNaNになる</span>
-<span class="hljs-built_in">Number</span>(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// =&gt; NaN</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// =&gt; NaN</span>
 </code></pre>
 <p>そのため、任意の値から数値へ変換した場合には、<code>NaN</code>になってしまった場合の処理を書く必要があります。
 変換した結果が<code>NaN</code>であるかは<code>Number.isNaN(x)</code>メソッドで判定できます。</p>
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> userInput = <span class="hljs-string">&quot;任意の文字列&quot;</span>;
-<span class="hljs-keyword">const</span> num = <span class="hljs-built_in">Number</span>.parseInt(userInput, <span class="hljs-number">10</span>);
-<span class="hljs-keyword">if</span> (<span class="hljs-built_in">Number</span>.isNaN(num)) {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;パースした結果NaNになった&quot;</span>, num);
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> userInput = <span class="hljs-string">"任意の文字列"</span>;
+<span class="hljs-keyword">const</span> num = <span class="hljs-title class_">Number</span>.<span class="hljs-built_in">parseInt</span>(userInput, <span class="hljs-number">10</span>);
+<span class="hljs-keyword">if</span> (<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">isNaN</span>(num)) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"パースした結果NaNになった"</span>, num);
 }
 </code></pre>
 <h3 id="nan-is-number-type"><a name="nan-is-number-type" class="plugin-anchor" href="#nan-is-number-type"><i class="fa fa-link" aria-hidden="true"></i></a>NaNはNot a NumberだけどNumber型 </h3>
@@ -1747,40 +1806,40 @@ JavaScriptだけの性質ではありません。</p>
 たとえば、オブジェクトは数値とは互換性のないデータです。
 そのため、オブジェクトを明示的に変換したとしても結果は<code>NaN</code>になります。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-built_in">Number</span>({}); <span class="hljs-comment">// =&gt; NaN</span>
+<pre><code class="lang-js"><span class="hljs-title class_">Number</span>({}); <span class="hljs-comment">// =&gt; NaN</span>
 </code></pre>
 <p>また、<code>NaN</code>は何と演算しても結果は<code>NaN</code>になる特殊な値です。
 次のように、計算の途中で値が<code>NaN</code>になると、最終的な結果も<code>NaN</code>となります。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-keyword">const</span> x = <span class="hljs-number">10</span>;
-<span class="hljs-keyword">const</span> y = x + <span class="hljs-literal">NaN</span>;
+<span class="hljs-keyword">const</span> y = x + <span class="hljs-title class_">NaN</span>;
 <span class="hljs-keyword">const</span> z = y + <span class="hljs-number">20</span>;
-<span class="hljs-built_in">console</span>.log(x); <span class="hljs-comment">// =&gt; 10</span>
-<span class="hljs-built_in">console</span>.log(y); <span class="hljs-comment">// =&gt; NaN</span>
-<span class="hljs-built_in">console</span>.log(z); <span class="hljs-comment">// =&gt; NaN</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(x); <span class="hljs-comment">// =&gt; 10</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(y); <span class="hljs-comment">// =&gt; NaN</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(z); <span class="hljs-comment">// =&gt; NaN</span>
 </code></pre>
 <p><code>NaN</code>はNumber型の一種であるという名前と矛盾したデータに見えます。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// NaNはnumber型</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">typeof</span> <span class="hljs-literal">NaN</span>); <span class="hljs-comment">// =&gt; &quot;number&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">NaN</span>); <span class="hljs-comment">// =&gt; "number"</span>
 </code></pre>
 <p>NaNしか持っていない特殊な性質として、自分自身と一致しないというものがあります。
 この特徴を利用することで、ある値が<code>NaN</code>であるかを判定できます。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isNaN</span>(<span class="hljs-params">x</span>) </span>{
+<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">isNaN</span>(<span class="hljs-params">x</span>) {
     <span class="hljs-comment">// NaNは自分自身と一致しない</span>
     <span class="hljs-keyword">return</span> x !== x;
 }
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">isNaN</span>(<span class="hljs-number">1</span>)); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">isNaN</span>(<span class="hljs-string">&quot;str&quot;</span>)); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">isNaN</span>({})); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">isNaN</span>([])); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">isNaN</span>(<span class="hljs-literal">NaN</span>)); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-built_in">isNaN</span>(<span class="hljs-number">1</span>)); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-built_in">isNaN</span>(<span class="hljs-string">"str"</span>)); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-built_in">isNaN</span>({})); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-built_in">isNaN</span>([])); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-built_in">isNaN</span>(<span class="hljs-title class_">NaN</span>)); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
 <p>同様の処理をする方法として<code>Number.isNaN(x)</code>メソッドがあります。
 実際に値が<code>NaN</code>かを判定する際には、<code>Number.isNaN(x)</code>メソッドを利用するとよいでしょう。<sup><a href="#fn_1" id="reffn_1">1</a></sup></p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-built_in">Number</span>.isNaN(<span class="hljs-literal">NaN</span>); <span class="hljs-comment">// =&gt; true</span>
+<pre><code class="lang-js"><span class="hljs-title class_">Number</span>.<span class="hljs-built_in">isNaN</span>(<span class="hljs-title class_">NaN</span>); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
 <p><code>NaN</code>は暗黙的な型変換の中でももっとも避けたい値となります。
 理由として、先ほど紹介したように<code>NaN</code>は何と演算しても結果が<code>NaN</code>となってしまうためです。
@@ -1789,35 +1848,35 @@ JavaScriptだけの性質ではありません。</p>
 しかし、<code>sum(x, y, z)</code>と呼び出したときの結果が<code>NaN</code>になってしまいました。
 これは、引数の中に<code>undefined</code>（未定義の値）が含まれているためです。</p>
 <pre><code class="lang-js"><span class="hljs-comment">// 任意の個数の数値を受け取り、その合計値を返す関数</span>
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sum</span>(<span class="hljs-params">...values</span>) </span>{
-    <span class="hljs-keyword">return</span> values.reduce(<span class="hljs-function">(<span class="hljs-params">total, value</span>) =&gt;</span> {
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">sum</span>(<span class="hljs-params">...values</span>) {
+    <span class="hljs-keyword">return</span> values.<span class="hljs-title function_">reduce</span>(<span class="hljs-function">(<span class="hljs-params">total, value</span>) =&gt;</span> {
         <span class="hljs-keyword">return</span> total + value;
     }, <span class="hljs-number">0</span>);
 }
 <span class="hljs-keyword">const</span> x = <span class="hljs-number">1</span>, z = <span class="hljs-number">10</span>;
 <span class="hljs-keyword">let</span> y; <span class="hljs-comment">// `y`はundefined</span>
-<span class="hljs-built_in">console</span>.log(sum(x, y, z)); <span class="hljs-comment">// =&gt; NaN</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">sum</span>(x, y, z)); <span class="hljs-comment">// =&gt; NaN</span>
 </code></pre>
 <p>そのため、<code>sum(x, y, z);</code>は次のように呼ばれていたのと同じ結果になります。
 <code>undefined</code>に数値を加算すると結果は<code>NaN</code>となります。</p>
 <!-- doctest: ReferenceError -->
-<pre><code class="lang-js">sum(<span class="hljs-number">1</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-number">10</span>); <span class="hljs-comment">// =&gt; NaN</span>
+<pre><code class="lang-js"><span class="hljs-title function_">sum</span>(<span class="hljs-number">1</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-number">10</span>); <span class="hljs-comment">// =&gt; NaN</span>
 <span class="hljs-comment">// 計算中にNaNとなるため、最終結果もNaNになる</span>
 <span class="hljs-number">1</span> + <span class="hljs-literal">undefined</span>; <span class="hljs-comment">// =&gt; NaN</span>
-<span class="hljs-literal">NaN</span> + <span class="hljs-number">10</span>; <span class="hljs-comment">// =&gt; NaN</span>
+<span class="hljs-title class_">NaN</span> + <span class="hljs-number">10</span>; <span class="hljs-comment">// =&gt; NaN</span>
 </code></pre>
 <p>これは、<code>sum</code>関数において引数を明示的にNumber型へ変換したとしても回避できません。
 つまり、次のように明示的な型変換をしても解決できないことがわかります。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sum</span>(<span class="hljs-params">...values</span>) </span>{
-    <span class="hljs-keyword">return</span> values.reduce(<span class="hljs-function">(<span class="hljs-params">total, value</span>) =&gt;</span> {
+<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">sum</span>(<span class="hljs-params">...values</span>) {
+    <span class="hljs-keyword">return</span> values.<span class="hljs-title function_">reduce</span>(<span class="hljs-function">(<span class="hljs-params">total, value</span>) =&gt;</span> {
         <span class="hljs-comment">// `value`をNumberで明示的に数値へ変換してから加算する</span>
-        <span class="hljs-keyword">return</span> total + <span class="hljs-built_in">Number</span>(value);
+        <span class="hljs-keyword">return</span> total + <span class="hljs-title class_">Number</span>(value);
     }, <span class="hljs-number">0</span>);
 }
 <span class="hljs-keyword">const</span> x = <span class="hljs-number">1</span>, z = <span class="hljs-number">10</span>;
 <span class="hljs-keyword">let</span> y; <span class="hljs-comment">// `y`はundefined</span>
-<span class="hljs-built_in">console</span>.log(sum(x, y, z)); <span class="hljs-comment">// =&gt; NaN</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">sum</span>(x, y, z)); <span class="hljs-comment">// =&gt; NaN</span>
 </code></pre>
 <p>この意図しない<code>NaN</code>への変換を避ける方法として、大きく分けて２つの方法があります。</p>
 <ul>
@@ -1836,23 +1895,23 @@ JavaScriptだけの性質ではありません。</p>
 <pre><code class="lang-js"><span class="hljs-comment">/**
  * 数値を合計した値を返します。
  * 1つ以上の数値と共に呼び出す必要があります。
- * <span class="hljs-doctag">@param <span class="hljs-type">{...number}</span> <span class="hljs-variable">values</span></span>
- * <span class="hljs-doctag">@returns <span class="hljs-type">{number}</span></span>
+ * <span class="hljs-doctag">@param</span> {<span class="hljs-type">...number</span>} <span class="hljs-variable">values</span>
+ * <span class="hljs-doctag">@returns</span> {<span class="hljs-type">number</span>}
  **/</span>
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sum</span>(<span class="hljs-params">...values</span>) </span>{
-    <span class="hljs-keyword">return</span> values.reduce(<span class="hljs-function">(<span class="hljs-params">total, value</span>) =&gt;</span> {
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">sum</span>(<span class="hljs-params">...values</span>) {
+    <span class="hljs-keyword">return</span> values.<span class="hljs-title function_">reduce</span>(<span class="hljs-function">(<span class="hljs-params">total, value</span>) =&gt;</span> {
         <span class="hljs-comment">// 値がNumber型ではない場合に、例外を投げる</span>
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value !== <span class="hljs-string">&quot;number&quot;</span>) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`<span class="hljs-subst">${value}</span>はNumber型ではありません`</span>);
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value !== <span class="hljs-string">"number"</span>) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`<span class="hljs-subst">${value}</span>はNumber型ではありません`</span>);
         }
-        <span class="hljs-keyword">return</span> total + <span class="hljs-built_in">Number</span>(value);
+        <span class="hljs-keyword">return</span> total + <span class="hljs-title class_">Number</span>(value);
     }, <span class="hljs-number">0</span>);
 }
 <span class="hljs-keyword">const</span> x = <span class="hljs-number">1</span>, z = <span class="hljs-number">10</span>;
 <span class="hljs-keyword">let</span> y; <span class="hljs-comment">// `y`はundefined</span>
-<span class="hljs-built_in">console</span>.log(x, y, z);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(x, y, z);
 <span class="hljs-comment">// Number型の値ではない`y`を渡しているため例外が発生する</span>
-<span class="hljs-built_in">console</span>.log(sum(x, y, z)); <span class="hljs-comment">// =&gt; Error</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">sum</span>(x, y, z)); <span class="hljs-comment">// =&gt; Error</span>
 </code></pre>
 <p>このように、<code>sum</code>関数はどのように使うべきかを明示することで、
 エラーとなったときに呼ばれる側と呼び出し側でどちらに問題があるのかが明確になります。
@@ -1867,35 +1926,35 @@ Number型と互換性がない値を数値にしても、<code>NaN</code>とな�
 そのため、明示的な変換をする前に、まず変換がそもそも必要なのかを考える必要があります。</p>
 <h3 id="judge-empty-string"><a name="judge-empty-string" class="plugin-anchor" href="#judge-empty-string"><i class="fa fa-link" aria-hidden="true"></i></a>空文字列かどうかを判定する </h3>
 <p>たとえば、文字列が空文字列なのかを判定したい場合を考えてみましょう。
-<code>&quot;&quot;</code>（空文字列）はfalsyな値であるため、明示的に<code>Boolean</code>コンストラクタ関数で真偽値へ変換できます。
+<code>""</code>（空文字列）はfalsyな値であるため、明示的に<code>Boolean</code>コンストラクタ関数で真偽値へ変換できます。
 しかし、falsyな値は空文字列以外にもあるため、明示的に変換したからといって空文字列だけを判定できるわけではありません。</p>
 <p>次のコードでは、明示的な型変換をしていますが、<code>0</code>も<strong>空文字列</strong>となってしまい意図しない挙動になっています。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// 空文字列かどうかを判定</span>
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isEmptyString</span>(<span class="hljs-params">str</span>) </span>{
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isEmptyString</span>(<span class="hljs-params">str</span>) {
     <span class="hljs-comment">// `str`がfalsyな値なら、`isEmptyString`関数は`true`を返す</span>
-    <span class="hljs-keyword">return</span> !<span class="hljs-built_in">Boolean</span>(str);
+    <span class="hljs-keyword">return</span> !<span class="hljs-title class_">Boolean</span>(str);
 }
 <span class="hljs-comment">// 空文字列列の場合は、trueを返す</span>
-<span class="hljs-built_in">console</span>.log(isEmptyString(<span class="hljs-string">&quot;&quot;</span>)); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">isEmptyString</span>(<span class="hljs-string">""</span>)); <span class="hljs-comment">// =&gt; true</span>
 <span class="hljs-comment">// falsyな値の場合は、trueを返す</span>
-<span class="hljs-built_in">console</span>.log(isEmptyString(<span class="hljs-number">0</span>)); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">isEmptyString</span>(<span class="hljs-number">0</span>)); <span class="hljs-comment">// =&gt; true</span>
 <span class="hljs-comment">// undefinedの場合は、trueを返す</span>
-<span class="hljs-built_in">console</span>.log(isEmptyString()); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">isEmptyString</span>()); <span class="hljs-comment">// =&gt; true</span>
 </code></pre>
 <p>ほとんどのケースにおいて、真偽値を得るには型変換ではなく別の方法が存在します。</p>
 <p>この場合、空文字列とは「String型で文字長が0の値」であると定義することで、<code>isEmptyString</code>関数をもっと正確に書くことができます。
 次のように実装することで、値が空文字列であるかを正しく判定できるようになりました。</p>
 <p><a class="gitbook-plugin-js-console" aria-hidden="true"></a></p>
 <pre><code class="lang-js"><span class="hljs-comment">// 空文字列かどうかを判定</span>
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isEmptyString</span>(<span class="hljs-params">str</span>) </span>{
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isEmptyString</span>(<span class="hljs-params">str</span>) {
     <span class="hljs-comment">// String型でlengthが0の値の場合はtrueを返す</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> str === <span class="hljs-string">&quot;string&quot;</span> &amp;&amp; str.length === <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> str === <span class="hljs-string">"string"</span> &amp;&amp; str.<span class="hljs-property">length</span> === <span class="hljs-number">0</span>;
 }
-<span class="hljs-built_in">console</span>.log(isEmptyString(<span class="hljs-string">&quot;&quot;</span>)); <span class="hljs-comment">// =&gt; true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">isEmptyString</span>(<span class="hljs-string">""</span>)); <span class="hljs-comment">// =&gt; true</span>
 <span class="hljs-comment">// falsyな値でも正しく判定できる</span>
-<span class="hljs-built_in">console</span>.log(isEmptyString(<span class="hljs-number">0</span>)); <span class="hljs-comment">// =&gt; false</span>
-<span class="hljs-built_in">console</span>.log(isEmptyString()); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">isEmptyString</span>(<span class="hljs-number">0</span>)); <span class="hljs-comment">// =&gt; false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">isEmptyString</span>()); <span class="hljs-comment">// =&gt; false</span>
 </code></pre>
 <p><code>Boolean</code>を使った型変換は、楽をするための型変換であり、正確に真偽値を得るための方法ではありません。
 そのため、型変換をする前にまず別の方法で解決できないかを考えることも大切です。</p>
@@ -1912,13 +1971,14 @@ Number型と互換性がない値を数値にしても、<code>NaN</code>とな�
 </blockquote>
 </body></html>
                                 
+
                                 </section>
                             
                         </div>
                     </div>
                 
 <footer class="book_footer">
-    <p>Copyright (c) 2016-present <a href="https://github.com/asciidwango/js-primer">jsprimer project</a></p>
+    <p>Copyright (c) 2016-present <a href="https://github.com/asciidwango/js-primer" target="_blank">jsprimer project</a></p>
 </footer>
 
             </div>
@@ -1941,7 +2001,7 @@ Number型と互換性がない値を数値にしても、<code>NaN</code>とな�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"author":"azu","description":"JavaScriptの暗黙的な型変換は意図しない挙動を発生する原因の1つです。暗黙的な型変換が発生する具体的なコード例や予測が難しいことについてを紹介します。逆に明示的に変換する方法についても紹介します。","title":"暗黙的な型変換","level":"1.3.7","depth":2,"next":{"title":"関数と宣言","level":"1.3.8","depth":2,"path":"basic/function-declaration/README.md","ref":"./basic/function-declaration/README.md","articles":[]},"previous":{"title":"演算子","level":"1.3.6","depth":2,"path":"basic/operator/README.md","ref":"./basic/operator/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","js-console","github-issue-feedback","sandpack"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"index":"83I8JIFICQ","apiKey":"9169ce4cd84fcf2376f29d9585c89254"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"sandpack":{},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2022","nodeversion":"18.14.0","npmversion":"9.3.1","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"basic/implicit-coercion/README.md","mtime":"2023-06-15T09:17:06.729Z","type":"markdown"},"gitbook":{"version":"4.0.4","time":"2023-06-15T09:17:31.207Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"author":"azu","description":"JavaScriptの暗黙的な型変換は意図しない挙動を発生する原因の1つです。暗黙的な型変換が発生する具体的なコード例や予測が難しいことについてを紹介します。逆に明示的に変換する方法についても紹介します。","sponsors":[],"title":"暗黙的な型変換","level":"1.3.7","depth":2,"next":{"title":"関数と宣言","level":"1.3.8","depth":2,"path":"basic/function-declaration/README.md","ref":"./basic/function-declaration/README.md","articles":[]},"previous":{"title":"演算子","level":"1.3.6","depth":2,"path":"basic/operator/README.md","ref":"./basic/operator/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","js-console","github-issue-feedback","sandpack"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"index":"83I8JIFICQ","apiKey":"9169ce4cd84fcf2376f29d9585c89254"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"sandpack":{},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2024","nodeversion":"22.7.0","npmversion":"10.8.2","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"basic/implicit-coercion/README.md","mtime":"2025-04-19T13:20:29.254Z","type":"markdown"},"gitbook":{"version":"6.0.2","time":"2025-04-19T13:20:44.643Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
@@ -2011,7 +2071,7 @@ Number型と互換性がない値を数値にしても、<code>NaN</code>とな�
         
     
         
-        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
         
     
 

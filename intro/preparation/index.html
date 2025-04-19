@@ -6,7 +6,7 @@
         <title>読み始める前の事前準備 · JavaScript Primer #jsprimer</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="この書籍でJavaScriptを学ぶ前に、まずは意味はわからなくてもいいので、JavaScriptを実行できることから確認していきます。">
-        <meta name="generator" content="HonKit 4.0.4">
+        <meta name="generator" content="HonKit 6.0.2">
         
         
         
@@ -28,7 +28,7 @@
                 
             
                 
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
                 
             
         
@@ -64,7 +64,7 @@
     <link rel="next" href="../feedback/" />
     
     
-    <link rel="prev" href="../authors/" />
+    <link rel="prev" href="../sponsors/" />
     
 
     <link rel="canonical" href="https://jsprimer.net/intro/preparation/">
@@ -84,12 +84,11 @@
 </script>
 <script type="module">
     // コンソールUIでコード実行したらイベントとして送信する
-    const config = { childList: true };
     const onExecuteCode = (scriptType) => {
-        gtag('event','execute_code', {
-            'event_category': 'console',
-            'event_label': 'execute_code',
-            'script_type': scriptType || 'unknown'
+        gtag("event", "execute_code", {
+            "event_category": "console",
+            "event_label": "execute_code",
+            "script_type": scriptType || "unknown"
         });
     };
     let observer;
@@ -98,7 +97,6 @@
             observer.disconnect();
         }
         const callback = function(mutationsList) {
-            // Use traditional 'for loops' for IE 11
             for (const mutation of mutationsList) {
                 const mirrorConsole = Array.from(mutation.addedNodes).find(node => Boolean(node.dataset.mirrorConsole));
                 if (mirrorConsole) {
@@ -107,14 +105,35 @@
             }
         };
         observer = new MutationObserver(callback);
-        const targetNode = document.body;
-        observer.observe(targetNode, config);
+        observer.observe(document.body, { childList: true });
+    };
+    const eventMap = new WeakMap();
+    // 問題を報告ボタンを押したらイベントとして送信する
+    const onClickIssueReport = () => {
+        console.log("click_issue_report");
+        gtag("event", "click_issue_report", {
+            "event_category": "contribution",
+            "event_label": "click_issue_report"
+        });
+    };
+    const observeIssueReport = () => {
+        const targetButton = document.querySelector(".gitbook-plugin-github-issue-feedback");
+        // すでにイベントが登録されていたら何もしない
+        if (eventMap.has(targetButton)) {
+            return;
+        }
+        if (targetButton) {
+            targetButton.addEventListener("click", onClickIssueReport);
+            eventMap.set(targetButton, onClickIssueReport);
+        }
     };
     window.addEventListener("DOMContentLoaded", function() {
         gitbook.events.on("page.change", function() {
             observeEvalEvent();
+            observeIssueReport();
         });
     });
+
 </script>
 <meta name="google-site-verification" content="bMotEbgYwkzA3k4PkuyK_NUdz0bKh-Phz0oUwNmRSVo"/>
 <style>
@@ -158,6 +177,13 @@
     }
 
     /* Markdown */
+    /* Support horizon scroll */
+    /* https://stackoverflow.com/questions/17770257/scrolling-tables-horizontally-without-wrapping-them-in-div */
+    .markdown-section table {
+        max-width: 100%;
+        overflow-x: auto;
+        display: block;
+    }
     .markdown-section sup,
     .markdown-section sub {
         font-size: 75%;
@@ -213,24 +239,18 @@
 </style>
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="../../manifest.json">
-<script>
-    if ("serviceWorker" in navigator) {
-        const isLocalhost = Boolean(
-            // preview
-            /netlify.com/.test(window.location.hostname) ||
-            // local
-            window.location.hostname === "localhost" ||
-            // [::1] is the IPv6 localhost address.
-            window.location.hostname === "[::1]" ||
-            // 127.0.0.1/8 is considered localhost for IPv4.
-            window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
-        );
-        if (!isLocalhost) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("../../sw.js");
-            });
+<script defer async>
+    // unregister old service worker(remove workbox)
+    // https://github.com/asciidwango/js-primer/pull/1701
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (const registration of registrations) {
+            registration.unregister();
         }
-    }
+    }).catch(function(err) {
+        console.error(new Error("Can not getRegistrations", {
+            cause: err
+        }));
+    });
 </script>
 
     </head>
@@ -295,7 +315,20 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.2.2" data-path="./">
+        <li class="chapter " data-level="1.2.2" data-path="../sponsors/">
+            
+                <a href="../sponsors/">
+            
+                    
+                    JavaScript Primerスポンサー
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2.3" data-path="./">
             
                 <a href="./">
             
@@ -308,7 +341,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.3" data-path="../feedback/">
+        <li class="chapter " data-level="1.2.4" data-path="../feedback/">
             
                 <a href="../feedback/">
             
@@ -1066,14 +1099,21 @@
     <div class="book-body">
         
             <div class="body-inner">
-                 
+                
                     
 
 <!-- Header -->
-<meta name="keywords" content="JavaScript,入門,入門書,チュートリアル,書籍,本,無料,Node.js,ブラウザ"/>
+<meta name="keywords" content="JavaScript,ECMAScript,JS,入門,チュートリアル,書籍,本,無料,Node.js,ブラウザ"/>
 <link rel="author" href="https://www.hatena.ne.jp/efcl/"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- OGP -->
+<meta property="og:title" content="JavaScript Primer - 迷わないための入門書"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://jsprimer.net/"/>
+<meta property="og:image" content="https://jsprimer.net/landing/img/cover-optimized.jpg"/>
+<meta property="og:site_name" content="JavaScript Primer"/>
+<meta property="og:description" content="JavaScript Primerは、JavaScriptの基礎から応用までを一貫して学べる入門書です。"/>
 <style>
     .book-header {
         display: flex;
@@ -1463,12 +1503,12 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script defer>
+    // focus on search box
     document.querySelector(".searchbox [type=\"reset\"]").addEventListener("click", function() {
         this.parentNode.querySelector("input").focus();
     });
-</script>
-<script defer>
+    // init DocSearch
     var search = docsearch({
         apiKey: "fd28ebaba94be0c39fb9fa1b2fed4f23", // use a SEARCH-ONLY api key here
         indexName: "asciidwango",
@@ -1477,17 +1517,9 @@
     });
 </script>
 <script>
-    window.addEventListener("DOMContentLoaded", function () {
-        gitbook.events.on("page.change", function () {
-            setTimeout(() => console.clear(), 1000);
-        });
-    });
-</script>
-<script type="text/javascript">
-    (function(){var t,e,n,r,a;for(t=function(){var t;return t=[],function(){var e,n,r,a;for(n=["init","start","stop","user","track","action","event","goal","chat","buy","page","view","admin","group","alias","ready","link","form","click","submit","cmd","emit","on","send","css","js","style","option","get","set","collection"],e=function(e){return function(){return t.push([e].concat(Array.prototype.slice.call(arguments,0)))}},r=0,a=[];r<n.length;)t[n[r]]=e(n[r]),a.push(r++);return a}(),t.init=function(e,n){var r,a;return t.api_key=e,t.options=n||{},a=document.createElement("script"),a.type="text/javascript",a.async=!0,a.charset="utf-8",a.src=t.options.tracker_url||"https://static.karte.io/libs/tracker.js",r=document.getElementsByTagName("script")[0],r.parentNode.insertBefore(a,r)},t},r=window.karte_tracker_names||["tracker"],e=0,n=r.length;n>e;e++)a=r[e],window[a]||(window[a]=t());tracker.init("a2d22604ec1d1c6d9d53d9d3eb87961d", { spa_mode: { reset_past_actions: true, close_actions: true }})}).call(this);
-    window.addEventListener("DOMContentLoaded", function(){
+    window.addEventListener("DOMContentLoaded", function() {
         gitbook.events.on("page.change", function() {
-            tracker.view();
+            setTimeout(() => console.clear(), 1000);
         });
     });
 </script>
@@ -1501,6 +1533,33 @@
                             
                                 <section class="normal markdown-section">
                                 
+<style>
+    .page-sponsors {
+        background: #fafafa;
+    }
+    .page-sponsors .page-sponsors-list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 1em 0;
+        list-style: none;
+        gap: 8px;
+    }
+    .page-sponsors-footer {
+        text-align: center;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+<div class="page-sponsors">
+
+    <div class="page-sponsors-footer">
+        JavaScript Primerの<a href="https://jsprimer.net/intro/sponsors/">スポンサーを募集中</a>
+    </div>
+
+</div>
+
                                 <html><head></head><body><h1 id="preparation"><a name="preparation" class="plugin-anchor" href="#preparation"><i class="fa fa-link" aria-hidden="true"></i></a>読みはじめる前の事前準備 </h1>
 <p>この書籍は、すでに何かしらのプログラミング言語を触ったことがある人向けに書かれています。
 そのため、この書籍でプログラミング言語を初めて学ぶ場合には、まずコードに慣れる必要があります。</p>
@@ -1510,33 +1569,33 @@
 <p>次のコードが書き写して実行するサンプルコードです。
 今はまだコードの内容が理解できなくても問題ありません。
 まずは、実際にコードを実行してみることが重要です。</p>
-<pre><code class="lang-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">hello</span>(<span class="hljs-params">name</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;こんにちは&quot;</span> + name + <span class="hljs-string">&quot;さん&quot;</span>);
+<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">hello</span>(<span class="hljs-params">name</span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"こんにちは"</span> + name + <span class="hljs-string">"さん"</span>);
 }
 
-hello(<span class="hljs-string">&quot;名前&quot;</span>);
+<span class="hljs-title function_">hello</span>(<span class="hljs-string">"名前"</span>);
 </code></pre>
 <h2 id="editor"><a name="editor" class="plugin-anchor" href="#editor"><i class="fa fa-link" aria-hidden="true"></i></a>エディター </h2>
-<p>このサンプルコードを、次のエディターに書き写して&quot;実行&quot;ボタンを押して、JavaScriptを実行してみてください。
-<code>&quot;</code>と<code>&quot;</code>で囲まれた<code>名前</code>という文字列は、自分の名前に書き換えてみてください。</p>
+<p>このサンプルコードを、次のエディターに書き写して"実行"ボタンを押して、JavaScriptを実行してみてください。
+<code>"</code>と<code>"</code>で囲まれた<code>名前</code>という文字列は、自分の名前に書き換えてみてください。</p>
 <!-- js-console:{ "state": "open" } -->
-<pre><code class="lang-js"><span class="hljs-comment">// この行を消して、先ほどのコードを書き写して&quot;実行&quot;を押してみよう</span>
+<pre><code class="lang-js"><span class="hljs-comment">// この行を消して、先ほどのコードを書き写して"実行"を押してみよう</span>
 </code></pre>
 <p>実行した結果として、次のようなメッセージが表示されているなら実行成功です
 （メッセージの<code>名前</code>の部分は、自分で書いた名前に書き換えて読んでください）。</p>
 <blockquote>
 <p>こんにちは名前さん</p>
 </blockquote>
-<p>&quot;ログをクリア&quot;ボタンを押すと、表示されているログを削除できます。
-&quot;終了&quot;ボタンを押すとエディターを終了できます。</p>
-<p>&quot;実行&quot;ボタンを押して異なるメッセージがでた場合は、次の注意事項を読んでもう一度挑戦してみてください。</p>
+<p>"ログをクリア"ボタンを押すと、表示されているログを削除できます。
+"終了"ボタンを押すとエディターを終了できます。</p>
+<p>"実行"ボタンを押して異なるメッセージがでた場合は、次の注意事項を読んでもう一度挑戦してみてください。</p>
 <h2 id="caution"><a name="caution" class="plugin-anchor" href="#caution"><i class="fa fa-link" aria-hidden="true"></i></a>注意事項 </h2>
-<p>&quot;実行&quot;したときに、<code>SyntaxError</code>というようなエラーが表示されたなら、コードのどこかを書き間違えています。
+<p>"実行"したときに、<code>SyntaxError</code>というようなエラーが表示されたなら、コードのどこかを書き間違えています。
 次の点に気をつけて成功するまで試してみてください。</p>
 <ul>
 <li>コードは日本語入力をオフにして入力します<ul>
-<li><code>&quot;</code>と<code>&quot;</code>で囲まれた部分以外は、すべて半角の英数字で入力してください</li>
-<li><code>&quot;</code>（ダブルクォート）、<code>;</code>（セミコロン）、カッコ、スペースなどの記号も半角になっているかを確認してください</li>
+<li><code>"</code>と<code>"</code>で囲まれた部分以外は、すべて半角の英数字で入力してください</li>
+<li><code>"</code>（ダブルクォート）、<code>;</code>（セミコロン）、カッコ、スペースなどの記号も半角になっているかを確認してください</li>
 </ul>
 </li>
 <li>1行入力するごとに<kbd>Enter</kbd>キーを押すことで改行できます</li>
@@ -1559,7 +1618,7 @@ hello(<span class="hljs-string">&quot;名前&quot;</span>);
 <p>どうしても実行できない場合は、まだこの書籍を読むには少し早いのかもしれません。
 また、書籍は文字を中心とした解説になるため、初めてのプログラミングではイメージするのが難しいこともあります。
 そのため、書籍より情報量の多い動画などを見て、まずはコードを実行できるようにすることからはじめるのがよいかもしれません。</p>
-<p><code>&quot;JavaScript 入門 動画&quot;</code>といったキーワードで検索し、映像で学んで見てからでも遅くはありません。</p>
+<p><code>"JavaScript 入門 動画"</code>といったキーワードで検索し、映像で学んで見てからでも遅くはありません。</p>
 <!-- textlint-enable preset-ja-technical-writing/ja-no-weak-phrase -->
 <p>また、もっとも効率的なのは、身近な知り合いに聞くことです。
 一人で学ぼうとすると、思わぬところで詰まってしまい進めなくなる場合があります。
@@ -1578,20 +1637,21 @@ JavaScriptという言語は、常に変化している言語としても知ら�
  -->
 </body></html>
                                 
+
                                 </section>
                             
                         </div>
                     </div>
                 
 <footer class="book_footer">
-    <p>Copyright (c) 2016-present <a href="https://github.com/asciidwango/js-primer">jsprimer project</a></p>
+    <p>Copyright (c) 2016-present <a href="https://github.com/asciidwango/js-primer" target="_blank">jsprimer project</a></p>
 </footer>
 
             </div>
 
             
                 
-                <a href="../authors/" class="navigation navigation-prev " aria-label="Previous page: 著者紹介">
+                <a href="../sponsors/" class="navigation navigation-prev " aria-label="Previous page: JavaScript Primerスポンサー">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -1607,7 +1667,7 @@ JavaScriptという言語は、常に変化している言語としても知ら�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"author":"azu","description":"この書籍でJavaScriptを学ぶ前に、まずは意味はわからなくてもいいので、JavaScriptを実行できることから確認していきます。","title":"読み始める前の事前準備","level":"1.2.2","depth":2,"next":{"title":"文章の間違いに気づいたら","level":"1.2.3","depth":2,"path":"intro/feedback/README.md","ref":"./intro/feedback/README.md","articles":[]},"previous":{"title":"著者紹介","level":"1.2.1","depth":2,"path":"intro/authors/README.md","ref":"./intro/authors/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","js-console","github-issue-feedback","sandpack"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"index":"83I8JIFICQ","apiKey":"9169ce4cd84fcf2376f29d9585c89254"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"sandpack":{},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2022","nodeversion":"18.14.0","npmversion":"9.3.1","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"intro/preparation/README.md","mtime":"2023-06-15T09:17:06.737Z","type":"markdown"},"gitbook":{"version":"4.0.4","time":"2023-06-15T09:17:31.207Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"author":"azu","description":"この書籍でJavaScriptを学ぶ前に、まずは意味はわからなくてもいいので、JavaScriptを実行できることから確認していきます。","sponsors":[],"title":"読み始める前の事前準備","level":"1.2.3","depth":2,"next":{"title":"文章の間違いに気づいたら","level":"1.2.4","depth":2,"path":"intro/feedback/README.md","ref":"./intro/feedback/README.md","articles":[]},"previous":{"title":"JavaScript Primerスポンサー","level":"1.2.2","depth":2,"path":"intro/sponsors/README.md","ref":"./intro/sponsors/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","js-console","github-issue-feedback","sandpack"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"index":"83I8JIFICQ","apiKey":"9169ce4cd84fcf2376f29d9585c89254"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"sandpack":{},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2024","nodeversion":"22.7.0","npmversion":"10.8.2","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"intro/preparation/README.md","mtime":"2025-04-19T13:20:29.264Z","type":"markdown"},"gitbook":{"version":"6.0.2","time":"2025-04-19T13:20:44.643Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
@@ -1677,7 +1737,7 @@ JavaScriptという言語は、常に変化している言語としても知ら�
         
     
         
-        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
         
     
 

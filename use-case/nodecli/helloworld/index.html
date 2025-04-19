@@ -6,7 +6,7 @@
         <title>Node.jsでHello World · JavaScript Primer #jsprimer</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="Hello Worldアプリケーションを通じてNode.jsのCLIアプリケーションの基本を学びます。">
-        <meta name="generator" content="HonKit 4.0.4">
+        <meta name="generator" content="HonKit 6.0.2">
         
         
         
@@ -28,7 +28,7 @@
                 
             
                 
-                <link rel="stylesheet" href="../../../gitbook/gitbook-plugin-fontsettings/website.css">
+                <link rel="stylesheet" href="../../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
                 
             
         
@@ -84,12 +84,11 @@
 </script>
 <script type="module">
     // コンソールUIでコード実行したらイベントとして送信する
-    const config = { childList: true };
     const onExecuteCode = (scriptType) => {
-        gtag('event','execute_code', {
-            'event_category': 'console',
-            'event_label': 'execute_code',
-            'script_type': scriptType || 'unknown'
+        gtag("event", "execute_code", {
+            "event_category": "console",
+            "event_label": "execute_code",
+            "script_type": scriptType || "unknown"
         });
     };
     let observer;
@@ -98,7 +97,6 @@
             observer.disconnect();
         }
         const callback = function(mutationsList) {
-            // Use traditional 'for loops' for IE 11
             for (const mutation of mutationsList) {
                 const mirrorConsole = Array.from(mutation.addedNodes).find(node => Boolean(node.dataset.mirrorConsole));
                 if (mirrorConsole) {
@@ -107,14 +105,35 @@
             }
         };
         observer = new MutationObserver(callback);
-        const targetNode = document.body;
-        observer.observe(targetNode, config);
+        observer.observe(document.body, { childList: true });
+    };
+    const eventMap = new WeakMap();
+    // 問題を報告ボタンを押したらイベントとして送信する
+    const onClickIssueReport = () => {
+        console.log("click_issue_report");
+        gtag("event", "click_issue_report", {
+            "event_category": "contribution",
+            "event_label": "click_issue_report"
+        });
+    };
+    const observeIssueReport = () => {
+        const targetButton = document.querySelector(".gitbook-plugin-github-issue-feedback");
+        // すでにイベントが登録されていたら何もしない
+        if (eventMap.has(targetButton)) {
+            return;
+        }
+        if (targetButton) {
+            targetButton.addEventListener("click", onClickIssueReport);
+            eventMap.set(targetButton, onClickIssueReport);
+        }
     };
     window.addEventListener("DOMContentLoaded", function() {
         gitbook.events.on("page.change", function() {
             observeEvalEvent();
+            observeIssueReport();
         });
     });
+
 </script>
 <meta name="google-site-verification" content="bMotEbgYwkzA3k4PkuyK_NUdz0bKh-Phz0oUwNmRSVo"/>
 <style>
@@ -158,6 +177,13 @@
     }
 
     /* Markdown */
+    /* Support horizon scroll */
+    /* https://stackoverflow.com/questions/17770257/scrolling-tables-horizontally-without-wrapping-them-in-div */
+    .markdown-section table {
+        max-width: 100%;
+        overflow-x: auto;
+        display: block;
+    }
     .markdown-section sup,
     .markdown-section sub {
         font-size: 75%;
@@ -213,24 +239,18 @@
 </style>
 <meta name="theme-color" content="#ffffff">
 <link rel="manifest" href="../../../manifest.json">
-<script>
-    if ("serviceWorker" in navigator) {
-        const isLocalhost = Boolean(
-            // preview
-            /netlify.com/.test(window.location.hostname) ||
-            // local
-            window.location.hostname === "localhost" ||
-            // [::1] is the IPv6 localhost address.
-            window.location.hostname === "[::1]" ||
-            // 127.0.0.1/8 is considered localhost for IPv4.
-            window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
-        );
-        if (!isLocalhost) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("../../../sw.js");
-            });
+<script defer async>
+    // unregister old service worker(remove workbox)
+    // https://github.com/asciidwango/js-primer/pull/1701
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (const registration of registrations) {
+            registration.unregister();
         }
-    }
+    }).catch(function(err) {
+        console.error(new Error("Can not getRegistrations", {
+            cause: err
+        }));
+    });
 </script>
 
     </head>
@@ -295,7 +315,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="../../../intro/preparation/">
+        <li class="chapter " data-level="1.2.2" data-path="../../../intro/sponsors/">
+            
+                <a href="../../../intro/sponsors/">
+            
+                    
+                    JavaScript Primerスポンサー
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../../../intro/preparation/">
             
                 <a href="../../../intro/preparation/">
             
@@ -308,7 +341,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.3" data-path="../../../intro/feedback/">
+        <li class="chapter " data-level="1.2.4" data-path="../../../intro/feedback/">
             
                 <a href="../../../intro/feedback/">
             
@@ -1066,14 +1099,21 @@
     <div class="book-body">
         
             <div class="body-inner">
-                 
+                
                     
 
 <!-- Header -->
-<meta name="keywords" content="JavaScript,入門,入門書,チュートリアル,書籍,本,無料,Node.js,ブラウザ"/>
+<meta name="keywords" content="JavaScript,ECMAScript,JS,入門,チュートリアル,書籍,本,無料,Node.js,ブラウザ"/>
 <link rel="author" href="https://www.hatena.ne.jp/efcl/"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<!-- OGP -->
+<meta property="og:title" content="JavaScript Primer - 迷わないための入門書"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://jsprimer.net/"/>
+<meta property="og:image" content="https://jsprimer.net/landing/img/cover-optimized.jpg"/>
+<meta property="og:site_name" content="JavaScript Primer"/>
+<meta property="og:description" content="JavaScript Primerは、JavaScriptの基礎から応用までを一貫して学べる入門書です。"/>
 <style>
     .book-header {
         display: flex;
@@ -1463,12 +1503,12 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script defer>
+    // focus on search box
     document.querySelector(".searchbox [type=\"reset\"]").addEventListener("click", function() {
         this.parentNode.querySelector("input").focus();
     });
-</script>
-<script defer>
+    // init DocSearch
     var search = docsearch({
         apiKey: "fd28ebaba94be0c39fb9fa1b2fed4f23", // use a SEARCH-ONLY api key here
         indexName: "asciidwango",
@@ -1477,17 +1517,9 @@
     });
 </script>
 <script>
-    window.addEventListener("DOMContentLoaded", function () {
-        gitbook.events.on("page.change", function () {
-            setTimeout(() => console.clear(), 1000);
-        });
-    });
-</script>
-<script type="text/javascript">
-    (function(){var t,e,n,r,a;for(t=function(){var t;return t=[],function(){var e,n,r,a;for(n=["init","start","stop","user","track","action","event","goal","chat","buy","page","view","admin","group","alias","ready","link","form","click","submit","cmd","emit","on","send","css","js","style","option","get","set","collection"],e=function(e){return function(){return t.push([e].concat(Array.prototype.slice.call(arguments,0)))}},r=0,a=[];r<n.length;)t[n[r]]=e(n[r]),a.push(r++);return a}(),t.init=function(e,n){var r,a;return t.api_key=e,t.options=n||{},a=document.createElement("script"),a.type="text/javascript",a.async=!0,a.charset="utf-8",a.src=t.options.tracker_url||"https://static.karte.io/libs/tracker.js",r=document.getElementsByTagName("script")[0],r.parentNode.insertBefore(a,r)},t},r=window.karte_tracker_names||["tracker"],e=0,n=r.length;n>e;e++)a=r[e],window[a]||(window[a]=t());tracker.init("a2d22604ec1d1c6d9d53d9d3eb87961d", { spa_mode: { reset_past_actions: true, close_actions: true }})}).call(this);
-    window.addEventListener("DOMContentLoaded", function(){
+    window.addEventListener("DOMContentLoaded", function() {
         gitbook.events.on("page.change", function() {
-            tracker.view();
+            setTimeout(() => console.clear(), 1000);
         });
     });
 </script>
@@ -1501,6 +1533,33 @@
                             
                                 <section class="normal markdown-section">
                                 
+<style>
+    .page-sponsors {
+        background: #fafafa;
+    }
+    .page-sponsors .page-sponsors-list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 1em 0;
+        list-style: none;
+        gap: 8px;
+    }
+    .page-sponsors-footer {
+        text-align: center;
+        padding: 0;
+        margin: 0;
+    }
+</style>
+<div class="page-sponsors">
+
+    <div class="page-sponsors-footer">
+        JavaScript Primerの<a href="https://jsprimer.net/intro/sponsors/">スポンサーを募集中</a>
+    </div>
+
+</div>
+
                                 <html><head></head><body><h1 id="hello-world-by-nodejs"><a name="hello-world-by-nodejs" class="plugin-anchor" href="#hello-world-by-nodejs"><i class="fa fa-link" aria-hidden="true"></i></a>Node.jsでHello World </h1>
 <p>実際にアプリケーションを作成する前に、まずはHello Worldアプリケーションを通じてNode.jsのCLIアプリケーションの基本を学びましょう。</p>
 <h2 id="create-project"><a name="create-project" class="plugin-anchor" href="#create-project"><i class="fa fa-link" aria-hidden="true"></i></a>プロジェクトディレクトリの作成 </h2>
@@ -1510,32 +1569,60 @@
 ここからは作成した<code>nodecli</code>ディレクトリ以下で作業していきます。</p>
 <p>またこのプロジェクトで作成するファイルは、必ず文字コード（エンコーディング）を<strong>UTF-8</strong>、改行コードを<strong>LF</strong>にしてファイルを保存します。</p>
 <h2 id="hello-world"><a name="hello-world" class="plugin-anchor" href="#hello-world"><i class="fa fa-link" aria-hidden="true"></i></a>Hello World </h2>
-<!-- textlint-disable preset-ja-technical-writing/no-exclamation-question-mark -->
 <p>まずはNode.jsでHello Worldアプリケーションを作ってみましょう。
-具体的には、実行すると標準出力に<code>&quot;Hello World!&quot;</code>という文字列を表示するCLIアプリケーションを記述します。
+具体的には、実行すると標準出力に<code>"Hello World!"</code>という文字列を表示するCLIアプリケーションを記述します。
 はじめに用意するのは、アプリケーションのエントリーポイントとなるJavaScriptファイルです。
 <code>nodecli</code>ディレクトリに<code>main.js</code>という名前でファイルを作成し、次のように記述します。</p>
 <div class="code-filename-block">
     <p class="code-filename">main.js</p>
 </div>
 
-<pre><code class="lang-javascript"><span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;Hello World!&quot;</span>);
+<pre><code class="lang-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">"Hello World!"</span>);
 </code></pre>
 <p>ウェブブラウザの実行環境では、<code>console.log</code>メソッドの出力先はブラウザの開発者ツールのコンソールでした。
 Node.js環境では、<code>console.log</code>メソッドの出力先は標準出力になります。
-このコードは、標準出力に<code>&quot;Hello World!&quot;</code>という文字列を出力するものです。</p>
-<!-- textlint-enable preset-ja-technical-writing/no-exclamation-question-mark -->
+このコードは、標準出力に<code>"Hello World!"</code>という文字列を出力するものです。</p>
 <p>JavaScriptのコードをNode.jsで実行するには、<code>node</code>コマンドを使用します。
 コマンドラインで<code>nodecli</code>ディレクトリに移動し、次のコマンドでNode.jsを使い<code>main.js</code>を実行します。
 まだ<code>node</code>コマンドの用意ができていなければ、先に「<a href="../../setup-local-env/">アプリケーション開発の準備</a>」の章を参照してください。</p>
-<pre><code class="lang-shell"><span class="hljs-meta">#</span><span class="bash"> `<span class="hljs-built_in">cd</span>`コマンドでnodecli/ディレクトリに移動する</span>
-<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> nodecli/</span>
-<span class="hljs-meta">#</span><span class="bash"> `node`コマンドで`main.js`を実行する</span>
-<span class="hljs-meta">$</span><span class="bash"> node main.js</span>
+<pre><code class="lang-shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">`<span class="hljs-built_in">cd</span>`コマンドでnodecli/ディレクトリに移動する</span>
+<span class="hljs-meta prompt_">$ </span><span class="language-bash"><span class="hljs-built_in">cd</span> nodecli/</span>
+<span class="hljs-meta prompt_"># </span><span class="language-bash">`node`コマンドで`main.js`を実行する</span>
+<span class="hljs-meta prompt_">$ </span><span class="language-bash">node main.js</span>
 Hello World!
 </code></pre>
 <p>Node.jsでは、エントリーポイントとなるJavaScriptファイルを作成し、そのファイルを<code>node</code>コマンドの引数に渡して実行するのが基本です。
 また、ウェブブラウザのJavaScriptと同じく、コードは1行目から順に実行されます。</p>
+<h2 id="setup-nodejs-project"><a name="setup-nodejs-project" class="plugin-anchor" href="#setup-nodejs-project"><i class="fa fa-link" aria-hidden="true"></i></a>Node.jsプロジェクトのセットアップ </h2>
+<p>今回作成するNode.jsのCLIアプリケーションは、<code>main.js</code>ファイル以外にも複数のファイルが必要になります。
+また、外部のnpmパッケージのインストールやテストスクリプトの実行なども行います。
+そのため、Node.jsプロジェクトのセットアップとして<code>package.json</code>というファイルを作成します。</p>
+<p><code>package.json</code>とは、プロジェクトの情報、プロジェクトが依存するパッケージ、プロジェクトで実行するスクリプトなどを記録するJSON形式のファイルです。
+<code>package.json</code>ファイルのひな形は、<code>npm init</code>コマンドで生成できます。
+まだ<code>npm</code>コマンドの用意ができていなければ、先に「<a href="../../setup-local-env/">アプリケーション開発の準備</a>」の章を参照してください。</p>
+<p>通常は対話式のプロンプトによって情報を設定しますが、ここではすべてデフォルト値で<code>package.json</code>を作成する<code>--yes</code>オプションを付与します。
+<code>nodecli</code>のディレクトリ内で、<code>npm init --yes</code>コマンドを実行して<code>package.json</code>を作成しましょう。</p>
+<pre><code class="lang-shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">npm init --<span class="hljs-built_in">yes</span></span>
+</code></pre>
+<p>生成された<code>package.json</code>ファイルは次のようになっています。</p>
+<div class="code-filename-block">
+    <p class="code-filename">package.json</p>
+</div>
+
+<pre><code class="lang-json">{
+  <span class="hljs-string">"name"</span>: <span class="hljs-string">"nodecli"</span>,
+  <span class="hljs-string">"version"</span>: <span class="hljs-string">"1.0.0"</span>,
+  <span class="hljs-string">"description"</span>: <span class="hljs-string">""</span>,
+  <span class="hljs-string">"main"</span>: <span class="hljs-string">"main.js"</span>,
+  <span class="hljs-string">"scripts"</span>: {
+    <span class="hljs-string">"test"</span>: <span class="hljs-string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span>
+  },
+  <span class="hljs-string">"keywords"</span>: [],
+  <span class="hljs-string">"author"</span>: <span class="hljs-string">""</span>,
+  <span class="hljs-string">"license"</span>: <span class="hljs-string">"ISC"</span>
+}
+</code></pre>
+<p>現時点では<code>package.json</code>にはあまり情報が記述されていませんが、後ほどアプリケーションの情報や依存パッケージを追加する際に利用します。</p>
 <h2 id="global-objects"><a name="global-objects" class="plugin-anchor" href="#global-objects"><i class="fa fa-link" aria-hidden="true"></i></a>Node.jsとブラウザのグローバルオブジェクト </h2>
 <p>Node.jsは、ウェブブラウザのChromeと同じV8というJavaScriptエンジンを利用しています。
 そのため、ECMAScriptで定義されている基本構文はブラウザと同じように使えます。
@@ -1543,7 +1630,7 @@ Hello World!
 <p>ECMAScriptで定義されているグローバルオブジェクトはブラウザとNode.jsどちらの環境にも存在します。
 たとえば<code>Boolean</code>や<code>String</code>などのラッパーオブジェクト、<code>Map</code>や<code>Promise</code>のようなビルトインオブジェクトはどちらの環境にも存在します。</p>
 <p>しかし、実行環境によって異なるオブジェクトもあります。
-たとえばウェブブラウザ環境のグローバルオブジェクトは<code>window</code>オブジェクトですが、Node.jsでは<a href="https://nodejs.org/docs/latest-v18.x/api/globals.html" target="_blank">global</a>と呼ばれるオブジェクトがグローバルオブジェクトになります。
+たとえばウェブブラウザ環境のグローバルオブジェクトは<code>window</code>オブジェクトですが、Node.jsでは<a href="https://nodejs.org/docs/latest-v20.x/api/globals.html" target="_blank">global</a>と呼ばれるオブジェクトがグローバルオブジェクトになります。
 ブラウザの<code>window</code>オブジェクトには、次のようなプロパティや関数があります。</p>
 <ul>
 <li><a href="https://developer.mozilla.org/ja/docs/Web/API/Document" target="_blank">document</a></li>
@@ -1551,8 +1638,8 @@ Hello World!
 </ul>
 <p>一方、Node.jsの<code>global</code>オブジェクトには、たとえば次のようなプロパティや関数があります。</p>
 <ul>
-<li><a href="https://nodejs.org/docs/latest-v18.x/api/process.html#process_process" target="_blank">process</a></li>
-<li><a href="https://nodejs.org/docs/latest-v18.x/api/buffer.html" target="_blank">Buffer</a></li>
+<li><a href="https://nodejs.org/docs/latest-v20.x/api/process.html#process_process" target="_blank">process</a></li>
+<li><a href="https://nodejs.org/docs/latest-v20.x/api/buffer.html" target="_blank">Buffer</a></li>
 </ul>
 <p>それぞれのグローバルオブジェクトにあるプロパティなどは、同じ名前でグローバル変数や関数としてアクセスできます。
 たとえば<code>window.document</code>プロパティは、グローバル変数の<code>document</code>としてもアクセスできます。</p>
@@ -1565,19 +1652,22 @@ Hello World!
 <p>これらを踏まえた上で、次のセクションからCLIアプリケーションの開発をはじめていきましょう。</p>
 <h2 id="section-checklist"><a name="section-checklist" class="plugin-anchor" href="#section-checklist"><i class="fa fa-link" aria-hidden="true"></i></a>このセクションのチェックリスト </h2>
 <ul>
-<li><code>main.js</code>ファイルを作成した</li>
-<li><code>node</code>コマンドで<code>main.js</code>を実行し、標準出力にログが出力されるのを確認した</li>
+<li><code>nodecli</code>ディレクトリを作成した</li>
+<li><code>nodecli/main.js</code>ファイルを作成した</li>
+<li><code>node</code>コマンドで<code>nodecli/main.js</code>を実行し、標準出力にログが出力されるのを確認した</li>
+<li><code>npm init --yes</code>コマンドで<code>nodecli/package.json</code>ファイルを作成した</li>
 <li>グローバルオブジェクトについて、ウェブブラウザとNode.jsで実行環境による違いがあることを理解した</li>
 </ul>
 </body></html>
                                 
+
                                 </section>
                             
                         </div>
                     </div>
                 
 <footer class="book_footer">
-    <p>Copyright (c) 2016-present <a href="https://github.com/asciidwango/js-primer">jsprimer project</a></p>
+    <p>Copyright (c) 2016-present <a href="https://github.com/asciidwango/js-primer" target="_blank">jsprimer project</a></p>
 </footer>
 
             </div>
@@ -1600,7 +1690,7 @@ Hello World!
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"author":"laco","description":"Hello Worldアプリケーションを通じてNode.jsのCLIアプリケーションの基本を学びます。","title":"Node.jsでHello World","level":"1.4.3.1","depth":3,"next":{"title":"コマンドライン引数を処理する","level":"1.4.3.2","depth":3,"path":"use-case/nodecli/argument-parse/README.md","ref":"./use-case/nodecli/argument-parse/README.md","articles":[]},"previous":{"title":"Node.jsでCLIアプリ","level":"1.4.3","depth":2,"path":"use-case/nodecli/README.md","ref":"./use-case/nodecli/README.md","articles":[{"title":"Node.jsでHello World","level":"1.4.3.1","depth":3,"path":"use-case/nodecli/helloworld/README.md","ref":"./use-case/nodecli/helloworld/README.md","articles":[]},{"title":"コマンドライン引数を処理する","level":"1.4.3.2","depth":3,"path":"use-case/nodecli/argument-parse/README.md","ref":"./use-case/nodecli/argument-parse/README.md","articles":[]},{"title":"ファイルを読み込む","level":"1.4.3.3","depth":3,"path":"use-case/nodecli/read-file/README.md","ref":"./use-case/nodecli/read-file/README.md","articles":[]},{"title":"MarkdownをHTMLに変換する","level":"1.4.3.4","depth":3,"path":"use-case/nodecli/md-to-html/README.md","ref":"./use-case/nodecli/md-to-html/README.md","articles":[]},{"title":"ユニットテストを記述する","level":"1.4.3.5","depth":3,"path":"use-case/nodecli/refactor-and-unittest/README.md","ref":"./use-case/nodecli/refactor-and-unittest/README.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","js-console","github-issue-feedback","sandpack"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"index":"83I8JIFICQ","apiKey":"9169ce4cd84fcf2376f29d9585c89254"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"sandpack":{},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2022","nodeversion":"18.14.0","npmversion":"9.3.1","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"use-case/nodecli/helloworld/README.md","mtime":"2023-06-15T09:17:06.745Z","type":"markdown"},"gitbook":{"version":"4.0.4","time":"2023-06-15T09:17:31.207Z"},"basePath":"../../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"author":"laco","description":"Hello Worldアプリケーションを通じてNode.jsのCLIアプリケーションの基本を学びます。","sponsors":[],"title":"Node.jsでHello World","level":"1.4.3.1","depth":3,"next":{"title":"コマンドライン引数を処理する","level":"1.4.3.2","depth":3,"path":"use-case/nodecli/argument-parse/README.md","ref":"./use-case/nodecli/argument-parse/README.md","articles":[]},"previous":{"title":"Node.jsでCLIアプリ","level":"1.4.3","depth":2,"path":"use-case/nodecli/README.md","ref":"./use-case/nodecli/README.md","articles":[{"title":"Node.jsでHello World","level":"1.4.3.1","depth":3,"path":"use-case/nodecli/helloworld/README.md","ref":"./use-case/nodecli/helloworld/README.md","articles":[]},{"title":"コマンドライン引数を処理する","level":"1.4.3.2","depth":3,"path":"use-case/nodecli/argument-parse/README.md","ref":"./use-case/nodecli/argument-parse/README.md","articles":[]},{"title":"ファイルを読み込む","level":"1.4.3.3","depth":3,"path":"use-case/nodecli/read-file/README.md","ref":"./use-case/nodecli/read-file/README.md","articles":[]},{"title":"MarkdownをHTMLに変換する","level":"1.4.3.4","depth":3,"path":"use-case/nodecli/md-to-html/README.md","ref":"./use-case/nodecli/md-to-html/README.md","articles":[]},{"title":"ユニットテストを記述する","level":"1.4.3.5","depth":3,"path":"use-case/nodecli/refactor-and-unittest/README.md","ref":"./use-case/nodecli/refactor-and-unittest/README.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["-search","-lunr","page-toc-button","include-codeblock","anchors","canonical-link","js-console","github-issue-feedback","sandpack"],"root":"./source/","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"docSearch":{"index":"83I8JIFICQ","apiKey":"9169ce4cd84fcf2376f29d9585c89254"},"github-issue-feedback":{"repo":"asciidwango/js-primer","label":"問題を報告する"},"fontsettings":{"theme":"white","family":"sans","size":2},"js-console":{},"canonical-link":{"baseURL":"https://jsprimer.net"},"highlight":{},"page-toc-button":{"maxTocDepth":2,"minTocSize":2},"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"./resources/gitbook-plugin-include-codeblock.hbs","theme":"chrome","unindent":false},"sandpack":{},"edit-link":{"base":"https://github.com/asciidwango/js-primer/edit/master/source/","label":"Edit"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"anchors":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"IPAexMincho","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"index.md","glossary":"GLOSSARY.md","summary":"README.md"},"variables":{"esversion":"2024","nodeversion":"22.7.0","npmversion":"10.8.2","triplebackticks":"```","console":"<a class=\"gitbook-plugin-js-console\" aria-hidden=\"true\"></a>"},"title":"JavaScript Primer #jsprimer","gitbook":">=3.0.0","description":"JavaScriptの基本的な書き方からアプリケーションの作成などのユースケースを学ぶための入門書です"},"file":{"path":"use-case/nodecli/helloworld/README.md","mtime":"2025-04-19T13:20:29.270Z","type":"markdown"},"gitbook":{"version":"6.0.2","time":"2025-04-19T13:20:44.643Z"},"basePath":"../../..","book":{"language":""}});
         });
     </script>
 </div>
@@ -1670,7 +1760,7 @@ Hello World!
         
     
         
-        <script src="../../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        <script src="../../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
         
     
 
